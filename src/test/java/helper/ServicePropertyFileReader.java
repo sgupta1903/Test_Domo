@@ -51,6 +51,9 @@ public class ServicePropertyFileReader {
 
         if ("Linux".equals(propertyValue)) {
             return "/opt/selenium/drivers/chromedriver";
+        }else if("window".equals(propertyValue))
+        {
+            return "/opt/selenium/drivers/chromedriver";
         }
         return propertyValue;
     }

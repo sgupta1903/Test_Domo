@@ -184,7 +184,7 @@ task suiteRunner(type: Test) {
             println 'Data Migration Parallel test Scenario Running'
             clubprop.setProperty("club",clubValue.toString());
             prop.setProperty("env", envValue.toString())
-            prop.setProperty("os", "Linux")
+            prop.setProperty("os", "window")
             prop.setProperty("browserLaunch", "headless")
             dependsOn cleanTest
             useDefaultListeners = true
