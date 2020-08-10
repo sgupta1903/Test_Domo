@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Tests" parallel="false">
+    <test name="Data_Migration_Test" group-by-instances="true">
+        <classes>
+            <class name="testcase.datamigrationtest.WriteDataToExcelTest"/>
+        </classes>
+    </test>
+</suite>

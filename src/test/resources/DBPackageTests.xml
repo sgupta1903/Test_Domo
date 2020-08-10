@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Tests"  parallel= "false">
+    <test name="DB Package Tests">
+        <classes>
+            <class name="testcase.dbpackagetest.BillingDBPackageTests" />
+            <class name="testcase.dbpackagetest.OrganisationDBPackageTests" />
+            <class name="testcase.dbpackagetest.TaxationDBPackageTests" />
+            <class name="testcase.dbpackagetest.CatalogDBPackageTests" />
+            </classes>
+        </test>
+    </suite>

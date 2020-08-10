@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Tests" parallel="false">
+    <test name="Open Ended Scenario" preserve-order="false">
+
+        <packages>
+
+            <package name="testcase.unoapptestcases.endtoendscenario.scenario.openended.bank"/>
+
+        </packages>
+<!--        <classes>-->
+<!--            <class name="testcase.unoapptestcases.endtoendscenario.scenario.openended.bank.CreateCurrentSubsAnnuallyFreqWithoutDwnPay_Test" />-->
+
+<!--        </classes>-->
+    </test>
+
+</suite>
+

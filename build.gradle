@@ -1,0 +1,358 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.qameta.allure:allure-gradle"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version "2.8.1"
+}
+apply plugin: "io.qameta.allure"
+
+task testJar(type: Jar, dependsOn: testClasses) {
+    classifier = 'tests'
+    from sourceSets.test.output
+}
+
+task allJar(type: Jar) {
+    baseName = 'test-abc3-domo'
+    from { configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with testJar
+}
+group 'mydomo'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://s3.amazonaws.com/redshift-maven-repository/release" }
+}
+
+configurations {
+    agent
+}
+allure {
+    version = '2.9.0'
+    autoconfigure = true
+    aspectjweaver = true
+    allureJavaVersion = '2.7.0'
+
+    String path = System.getProperty("user.dir");
+    String absolutePath = path.replace("\\", "\\\\");
+    resultsDir = file( absolutePath+"/target/allure-results")
+
+    downloadLink = "https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/$version/allure-$version" + ".zip"
+    downloadLink = "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/$version/allure-commandline-$version" + ".zip"
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-firefox-driver', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-remote-driver', version: '3.141.59'
+    testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
+    compile group: 'org.ini4j', name: 'ini4j', version: '0.5.1'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
+    testCompile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+    compile group: 'com.jayway.restassured', name: 'json-path', version: '2.9.0'
+    testCompile group: 'com.bluecatcode.hamcrest', name: 'hamcrest-1.3-extended', version: '1.1.0'
+    compile group: 'com.relevantcodes', name: 'extentreports', version: '2.40.2'
+    compile group: 'javassist', name: 'javassist', version: '3.12.1.GA'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.7'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+    compile group: 'org.springframework', name: 'spring-dao', version: '2.0.3'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '2.0.6'
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.5'
+    compile group: 'com.jcraft', name: 'jsch', version: '0.1.54'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.12'
+    // compile 'com.amazon.redshift:redshift-jdbc42-no-awssdk:1.2.10.1009'
+    compile group: 'postgresql', name: 'postgresql', version: '8.4-702.jdbc4'
+    compile group: 'org.json', name: 'json', version: '20180130'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'com.github.wnameless', name: 'json-flattener', version: '0.6.0'
+
+    compile group: 'org.apache.commons', name: 'commons-email', version: '1.3'
+    compile group: 'org.apache.commons', name: 'commons-parent', version: '28', ext: 'pom'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.3.0-alpha0'
+    compile group: 'org.json', name: 'json', version: '20180130'
+    compile group: 'com.jayway.restassured', name: 'json-path', version: '2.9.0'
+    compile 'com.mashape.unirest:unirest-java:1.3.27'
+    compile group: 'io.earcam.wrapped', name: 'com.sun.tools.attach', version: '1.8.0_jdk8u131-b11'
+    testCompile("io.github.bonigarcia:webdrivermanager:3.8.1")
+    compile group: 'ru.stqa.selenium', name: 'webdriver-factory', version: '3.0'
+    compile group: 'io.vavr', name: 'vavr', version: '0.10.0'
+
+    //allure
+    agent 'org.aspectj:aspectjweaver:1.8.10'
+    // https://mvnrepository.com/artifact/io.qameta.allure/allure-testng
+    compile group: 'io.qameta.allure', name: 'allure-testng', version: '2.9.0'
+    // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.5'
+    //   https://mvnrepository.com/artifact/io.qameta.allure/allure-commandline //done
+    compile group: 'io.qameta.allure', name: 'allure-commandline', version: '2.13.3'
+
+    compile group: 'com.github.automatedowl', name: 'allure-environment-writer', version: '1.0.0'
+
+    //lambook
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.6'
+
+    //Database
+    compile "com.amazon.redshift:redshift-jdbc42:1.2.10.1009"
+
+    //scheduler jenkins
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.683'
+    //added encoder and decoder
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.14'
+}
+
+test.doFirst {
+    jvmArgs "-javaagent:${configurations.agent.singleFile}"
+}
+
+/*To Run the xml file at Runtime Command to execute xml file gradlew suiteRunner -Pbilling -PenvValue=QA*/
+
+def pushpulltest = project.hasProperty("pushpulltest")
+def openendbank = project.hasProperty("openendbank")
+def openendcard = project.hasProperty("openendcard")
+def multilocationbank = project.hasProperty("multilocationbank")
+def multilocationcard = project.hasProperty("multilocationcard")
+def multimemberbank = project.hasProperty("multimemberbank")
+def multimembercard = project.hasProperty("multimembercard")
+def multisubscriptionbank = project.hasProperty("multisubscriptionbank")
+def multisubscriptioncard = project.hasProperty("multisubscriptioncard")
+def installmentbankautorenewtoopen = project.hasProperty("installmentbankautorenewtoopen")
+def installmentbankautorenewtoterm = project.hasProperty("installmentbankautorenewtoterm")
+def installmentbanknonrenew = project.hasProperty("installmentbanknonrenew")
+def installmentcardautorenewtoopen = project.hasProperty("installmentcardautorenewtoopen")
+def installmentcardautorenewtoterm = project.hasProperty("installmentcardautorenewtoterm")
+def installmentcardnonrenew = project.hasProperty("installmentcardnonrenew")
+def negativescenario = project.hasProperty("negativescenario")
+def updatedetails = project.hasProperty("updatedetails")
+def fieldvalidation = project.hasProperty("fieldvalidation")
+def datamigrationtest = project.hasProperty("datamigrationtest")
+
+task suiteRunner(type: Test) {
+    useTestNG() {
+
+        testLogging {
+            showStandardStreams = true
+            exceptionFormat = 'full'
+            showStackTraces = "true"
+        }
+
+        def prop = new Properties()
+        File myfile = file("src/test/resources/env.properties");
+        prop.load(myfile.newDataInputStream())
+
+        def clubprop = new Properties()
+        File clubfile = file("src/test/resources/clubnumber.properties");
+        clubprop.load(clubfile.newDataInputStream())
+
+        if (pushpulltest) {
+            println 'Push Pull suite running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/PushPullTest.xml"
+        }
+        if (datamigrationtest) {
+            println 'Data Migration test Scenario Running'
+            clubprop.setProperty("club",clubValue.toString());
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            clubprop.store(clubfile.newWriter(), null)
+            suites "src/test/resources/DataMigrationTest.xml"
+        }
+        if (openendbank) {
+            println 'Openend Test running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/OpenEndBank.xml"
+        }
+        if (openendcard) {
+            println 'Openend Test running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/OpenEndCard.xml"
+        }
+        if (multilocationbank) {
+            println 'MultiLocation Bank Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiLocationBank.xml"
+        }
+        if (multilocationcard) {
+            println 'MultiLocation Card Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiLocationCard.xml"
+        }
+        if (multimemberbank) {
+            println 'MultiMember Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiMemberBank.xml"
+        }
+        if (multimembercard) {
+            println 'MultiMember Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiMemberCard.xml"
+        }
+        if (multisubscriptionbank) {
+            println 'MultiSubscription Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiSubscriptionBank.xml"
+        }
+        if (multisubscriptioncard) {
+            println 'MultiSubscription Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/MultiSubscriptionCard.xml"
+        }
+
+        if (installmentbankautorenewtoopen) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentBank_AutoRenewtoOpen.xml"
+        }
+        if (installmentbankautorenewtoterm) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentBank_AutoRenewtoTerm.xml"
+        }
+        if (installmentbanknonrenew) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentBank_NonRenew.xml"
+        }
+        if (installmentcardautorenewtoopen) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentCard_AutoRenewtoOpen.xml"
+        }
+        if (installmentcardautorenewtoterm) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentCard_AutoRenewtoTerm.xml"
+        }
+        if (installmentcardnonrenew) {
+            println 'Installment Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/InstallmentCard_NonRenew.xml"
+
+        }
+        if (fieldvalidation) {
+            println 'FieldValidation Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/FieldValidation.xml"
+
+        }
+        if (negativescenario) {
+            println 'Negative Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/NegativeScenario.xml"
+
+        }
+        if (updatedetails) {
+            println 'UpdateDetails Scenario Running'
+            prop.setProperty("env", envValue.toString())
+            prop.setProperty("os", "Linux")
+            prop.setProperty("browserLaunch", "headless")
+            dependsOn cleanTest
+            useDefaultListeners = true
+            prop.store(myfile.newWriter(), null)
+            suites "src/test/resources/unoapp_xmls/UpdateDetails.xml"
+        }
+    }
+}

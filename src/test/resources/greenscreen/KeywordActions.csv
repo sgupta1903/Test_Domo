@@ -1,0 +1,29 @@
+Keyword,Action,Input,Action,Input
+Contract Maintenance,Send,{tab}2{ENTER},VerifyStatus,"41|114|212|114|""Contract Maintenance"""
+Contract Retrieval,Send,{tab}1{ENTER},VerifyStatus,"49|114|203|114|""Contract Retrieval"""
+Club  Maintenance,Send,{tab}<parameter1>{ENTER},VerifyStatus,"57|117|193|117|""Club Maintenance"""
+PageDownUntil,Keypress Until Keyword,"{PGDN}$320|203|465|203|""CONTROL VARIABLES"""
+Control Variables,Send,{F8},VerifyStatus,"256|134|500|134|""PAYMENT SCHEDULE MAINTENANCE"""
+Exit Green Screen,Exit
+CopyCashInfo,Copy And Append Content,"264|426|331|426|""Cash_Charge""$482|426|528|426|""Club_Begin_Date""$692|426|734|426|""Member_Begin_Date"""
+Return To,Keypress Until Keyword,"{F3}$274|135|348|135|""Main Menu"""
+CopyClientProfileDetails,Copy And Append Content,"141|161|600|161|""Location_Name""$85|530|349|530|""Account_Holder_Name""$400|530|473|530|""Routing_Number""$535|530|680|530|""Account_Number""$726|530|745|530|""Bank_Account_Type"""
+Main Menu Screen,Send,{tab}135{ENTER},VerifyStatus,"274|135|348|135|""Main Menu"""
+Profit Center Maintenance,Send,<parameter1>{ENTER},VerifyStatus,"274|140|492|140|""Profit Center Maintenance"""
+CopyItemCategory,Copy By Line And Append Content,[<parameter1>]|77|355|717|556${PGDN}
+ABC Rate Page,Send,{SHIFTDOWN}{F6},Send,{SHIFTUP}1{ENTER}
+CopyABCRates,VerifyStatus,"82|252|144|253|""ABC FEE""",Copy And Append Content,"273|246|325|247|""ABC_FEE_BASE_PERCENTAGE""$378|246|414|246|""ABC_FEE_PER_TRANSACTION""$282|267|324|266|""ACH_BASE_PERCENTAGE""$379|266|414|268|""ACH_PER_TRANSACTION""$285|293|319|297|""COUPON_BASE_PERCENTAGE""$380|291|413|287|""COUPON_PER_TRANSACTION""$278|310|324|308|""CLUB_LEVEL_FEE_BASE_PERCENTAGE""$379|308|414|309|""CLUB_LEVEL_FEE_PER_TRANSACTION""$280|356|322|358|""AMERICAN_EXPRESS_BASE_PERCENTAGE""$383|356|415|360|""AMERICAN_EXPRESS_PER_TRANSACTION""$278|370|326|369|""DISCOVER_BASE_PERCENTAGE""$378|373|414|371|""DISCOVER_PER_TRANSACTION""$280|389|325|392|""MASTER_CARD_BASE_PERCENTAGE""$378|391|415|392|""MASTER_CARD_PER_TRANSACTION""$280|414|326|414|""VISA_BASE_PERCENTAGE""$379|414|414|412|""VISA_PER_TRANSACTION""$280|436|324|436|""AMAZONE_PAY_BASE_PERCENTAGE""$378|436|413|433|""AMAZONE_PAY_PER_TRANSACTION""$280|455|323|455|""APPLE_PAY_BASE_PERCENTAGE""$380|457|415|457|""APPLE_PAY_PER_TRANSACTION""$274|495|323|491|""PAYMENTS_AT_CLUB_BASE_PERCENTAGE""$380|477|412|493|""PAYMENTS_AT_CLUB_PER_TRANSACTION""$280|516|323|517|""CC_CHARGE_BACK_BASE_PERCENTAGE""$363|515|415|515|""CC_CHARGE_BACK_PER_TRANSACTION""$278|519|326|518|""PRE_NOTE_BASE_PERCENTAGE""$361|539|414|538|""PRE_NOTE_PER_TRANSACTION"""
+Item Main Menu Screen,Send,{tab}300{ENTER},VerifyStatus,"274|135|348|135|""Main Menu"""
+Client Level Profit Center Maintenance,Send,<parameter1>{ENTER},VerifyStatus,"220|140|554|140|""Client Level Profit Center Maintenance"""
+CopyItemCategoryFee,Copy By Line And Append Content,[<parameter1>]|77|355|707|555${PGDN}
+ABC Fee Page,Send,{F6}
+CopyABCFeeRowWise,VerifyStatus,"334|127|478|141|""Fees Maintenance""",Copy And Append Content,97|341|738|496
+Enter Contract,Send,{tab}<parameter1>{tab}<parameter2>{ENTER}
+PayorPageDownUntil,Keypress Until Keyword,"{PGDN}$526|465|660|465|""Buyer Info Maint"""
+Buyer Info,VerifyStatus,"526|465|660|465|""Buyer Info Maint""",Send,{F10}
+CopyBuyerInfo,VerifyStatus,"41|116|185|116|""Buyer Info Maint.""",Copy And Append Content,"202|200|526|200|""Buyer_Name""$202|270|735|270|""Buyer_Email""$41|116|185|116|""Screen_Title""$202|316|276|316|""Buyer_Soc_Sec_Number""$536|316|580|316|""Buyer_Birth_Day""$202|338|374|338|""Buyer_Driver_License""$535|338|544|338|""Buyer_Driver_License_State""$202|383|590|383|""Buyer_Address_1""$202|406|590|406|""Buyer_Address_2""$202|425|402|428|""Buyer_City""$427|427|437|427|""Buyer_State""$465|427|502|427|""Buyer_Zip""$526|427|557|427|""Buyer_Bad_Address""$202|471|319|471|""Buyer_Home_Phone""$202|492|375|492|""Buyer_Work_Phone""$202|516|322|516|""Buyer_Cell_Phone""$202|536|320|536|""Buyer_Emergency_Phone""
+ReturnToDraftUnderName,Keypress Until Keyword,"{F3}$526|515|662|515|""Draft Under Name"""
+CopyPayorDetail,Copy And Append Content,"525|533|655|533|""Draft_First_Name""$535|555|697|555|""Draft_Last_Name""$68|138|158|138|""Agreement_Number""$68|160|194|160|""First_Name""$229|160|239|160|""Middile_Name""$292|160|456|160|""Last_Name""$68|186|455|186|""Address_1""$68|205|455|205|""Address_2""$67|227|266|227|""City""$300|229|328|229|""State""$374|222|455|222|""Zip""$68|250|168|250|""Home_Phone""$222|250|292|250|""SSN""$356|250|364|250|""Country""$68|272|168|272|""Work_Phone""$68|295|168|295|""Emergency_Phone""$68|316|168|316|""Mobile_Phone""$284|316|295|316|""Communication_Text""$338|316|357|316|""Communication_Phone""$391|316|410|316|""Communication_Letter""$445|316|453|316|""Communication_Email""$68|339|454|339|""Email""$111|360|195|360|""Bank_Routing_Number""$247|360|395|360|""Bank_Account_Number""$446|360|457|360|""Bank_Account_Type""$122|383|258|383|""Credit_Card_Number""$355|382|382|382|""Credit_Card_Expiry""$448|382|454|382|""Credit_Card_Type"""
+CopyMultilineByCount,Copy Multi Line By Page Count And Append Content,79|237|730|539${PgUp}&713|547|740|559$13,VerifyStatus,"655|555|690|555|""Count"""
+Location Note Page,Send,{F5}
+CopyLocationNotesText,VerifyStatus,"65|105|190|120|""CLUB Recording""",Copy And Append Content,135|214|646|539

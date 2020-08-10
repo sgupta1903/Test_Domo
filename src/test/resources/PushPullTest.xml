@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Tests"  parallel= "false">
+    <test name="Stage_Upsert_Test">
+        <classes>
+            <class name="testcase.pushpulltest.Dashboard_Login_Test" />
+            <class name="testcase.pushpulltest.DataSetTest" />
+            <class name="testcase.pushpulltest.Dashboard_Logout_Test" />
+        </classes>
+    </test>
+</suite>
