@@ -36,6 +36,7 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
     private By firstName = By.xpath("//input[@id='firstName-PayorProfile']");
 
     EnvProperty env = EnvProperty.getInstance(AppConstants.DATA_MIGRATION_INI);
+    EnvProperty envProperty = EnvProperty.getInstance(OUTPUT_INI);
 
     //private By middleName = By.xpath("//input[@id='middleInitial-PayorProfile']");
     private By middleName = By.xpath("//input[@id='middleName-PayorProfile']");
@@ -83,17 +84,6 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
 
     private By transactionFilter = By.xpath("//input[@id='payorTransactionsFilterInput']");
     private By feeCheckBox = By.xpath("/span[contains(text(),'Fee')]");
-
-
-    Ini ini;
-
-    {
-        try {
-            ini = new Wini(this.getClass().getResourceAsStream('/' + OUTPUT_INI));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public MemberAccountPage click_transaction_filter() {
         logger.info("Clicking on Transaction Filter");
@@ -160,7 +150,7 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
 
     public MemberAccountPage verify_name(String name) {
         logger.info("verifying the Full Payor Name");
-        String nameUI = (find_element_value(this.firstName) + find_element_value(this.middleName) + find_element_value(this.lastName)).replace(" ", "");
+        String nameUI = (find_element_value(this.firstName) + find_element_value(this.lastName)).replace(" ", "");
         verify_value_matches(nameUI, name);
         return me();
     }
@@ -296,6 +286,16 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
     public MemberAccountPage verify_driving_license(String drivingLicense) {
         logger.info("Verifying the Payor Driving License");
         String drivingLicenseUI = find_element_attribute_value(this.drivingLicense, "placeholder").replaceAll("[^0-9]", "");
+        verify_value_matches(drivingLicenseUI, drivingLicense);
+        return me();
+    }
+
+    public MemberAccountPage verify_driving_license_green_screen(String drivingLicense) {
+        logger.info("Verifying the Payor Driving License");
+        int drivingLicenseLength=drivingLicense.length();
+        drivingLicense=drivingLicense.isEmpty() ? drivingLicense : drivingLicense.substring(drivingLicenseLength-4,drivingLicenseLength);
+        String drivingLicenseUI = find_element_attribute_value(this.drivingLicense, "placeholder");
+        drivingLicenseUI=drivingLicenseUI.isEmpty() ? drivingLicenseUI : drivingLicenseUI.substring(6,10);
         verify_value_matches(drivingLicenseUI, drivingLicense);
         return me();
     }
@@ -510,9 +510,6 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
                         () -> verify_driving_license(storeAdditionalMemberDetails.getDrivingLicense()),
                         () -> verify_ssn(storeAdditionalMemberDetails.getSsn()),
                         () -> verify_birth_date_obc(storeAdditionalMemberDetails.getDateOfBirth())
-                       /* () -> verify_address(storeMemberDetails.getMemberAddress()),
-                        () -> verify_city(storeMemberDetails.getMemberCity()),
-                        () -> verify_zip_obc(storeMemberDetails)*/
                 );
             } else {
                 if (storeMemberDetails.getMemberAddress().equalsIgnoreCase(BAD_ADDRESS)) {
@@ -526,7 +523,12 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
                             () -> verify_birth_date_obc(storeAdditionalMemberDetails.getDateOfBirth())
                     );
 
-                } else
+                }
+                else if(storePaymentMethodDetails.getPaymentType().equalsIgnoreCase("No Billing Information")){
+                    logger.info("Biling information is not available");
+                }
+
+                else
                     verify_all(
 
                             () -> verify_name(storePaymentMethodDetails.getPayorName().replace(" ", "").trim()),
@@ -546,7 +548,7 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
     }
 
     public MemberAccountPage verify_payor_profile_from_green_screen(String clubNumber) {
-        ManagePayorProfileData managePayorProfile = new ManagePayorProfileData(ini.get(clubNumber));
+        ManagePayorProfileData managePayorProfile = new ManagePayorProfileData(envProperty.get(clubNumber));
         String phone = managePayorProfile.getPrimaryPhoneNumber().replaceAll(" ", "");
         String finalClubNumber = clubNumber.substring(0, 4);
         StateCodeList stateCodeList = new StateCodeList();
@@ -569,7 +571,7 @@ public class MemberAccountPage extends AbcCommonAbstractPage<MemberAccountPage> 
                     () -> verify_address(managePayorProfile.getAddress1()),
                     () -> verify_city(managePayorProfile.getCity()),
                     () -> verify_zip_green_screen(managePayorProfile.getZip()),
-                    () -> verify_driving_license(managePayorProfile.getDrivingLicense()),
+                    () -> verify_driving_license_green_screen(managePayorProfile.getDrivingLicense()),
                     () -> verify_ssn(managePayorProfile.getSsn().replaceAll("[*]", "")),
                     () -> verify_birth_date_obc(managePayorProfile.getDateOfBirth()),
                     () -> verify_state(stateCodeList.getState(managePayorProfile.getState()))

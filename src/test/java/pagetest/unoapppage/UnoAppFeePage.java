@@ -122,7 +122,6 @@ public class UnoAppFeePage extends AbcCommonAbstractPage<UnoAppFeePage> {
     public UnoAppFeePage add_fee() {
         select_late_fee_btn();
         select_access_type(env.getConfigPropertyValue("fees", "accessType"));
-        select_draft_fee(env.getConfigPropertyValue("fees", "draftFee"));
         fee_grace_days(env.getConfigPropertyValue("fees", "feeGraceDays"));
         enter_fee_amount(env.getConfigPropertyValue("fees", "feeAmount"));
         enter_start_date(getDate(Integer.parseInt(env.getConfigPropertyValue("fees", "startDate"))));

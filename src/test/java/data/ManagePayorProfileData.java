@@ -43,10 +43,13 @@ public class ManagePayorProfileData {
     }
 
     public void setFirstName() {
-        if (payorProfileData.get("Buyer_Name").isEmpty())
-            this.firstName = payorProfileData.get("Draft_First_Name");
-        else if (payorProfileData.get("Draft_First_Name").isEmpty())
+        if (payorProfileData.get("Buyer_First_Name").isEmpty() && payorProfileData.get("Draft_First_Name").isEmpty())
             this.firstName = payorProfileData.get("First_Name");
+        else if (!payorProfileData.get("Buyer_First_Name").isEmpty())
+            this.firstName = payorProfileData.get("Buyer_First_Name");
+        else if (payorProfileData.get("Buyer_First_Name").isEmpty())
+            this.firstName = payorProfileData.get("Draft_First_Name");
+
     }
 
     public String getFirstName() {
@@ -55,10 +58,12 @@ public class ManagePayorProfileData {
     }
 
     public void setLastName() {
-        if (payorProfileData.get("Buyer_Name").isEmpty())
-            this.lastName = payorProfileData.get("Draft_Last_Name");
-        else if (payorProfileData.get("Draft_Last_Name").isEmpty())
+        if (payorProfileData.get("Buyer_Last_Name").isEmpty() && payorProfileData.get("Draft_Last_Name").isEmpty())
             this.lastName = payorProfileData.get("Last_Name");
+        else if (!payorProfileData.get("Buyer_Last_Name").isEmpty())
+            this.lastName = payorProfileData.get("Buyer_Last_Name");
+        else if (payorProfileData.get("Buyer_Last_Name").isEmpty())
+            this.lastName = payorProfileData.get("Draft_Last_Name");
     }
 
     public String getLastName() {
@@ -226,7 +231,10 @@ public class ManagePayorProfileData {
     }
 
     public void setDrivingLicense() {
-        this.drivingLicense = payorProfileData.get("Buyer_Driver_License");
+        if (payorProfileData.get("Buyer_Driver_License").isEmpty())
+            this.drivingLicense = payorProfileData.get("Driving_License");
+        else
+            this.drivingLicense = payorProfileData.get("Buyer_Driver_License");
     }
 
     public String getDrivingLicense() {

@@ -8,8 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import pagetest.datamigrationpage.MemberAccountPage;
-import pagetest.datamigrationpage.SearchClientProfilePage;
+import pagetest.datamigrationpage.*;
 import pagetest.obcUIPage.CashStoragePage;
 import pagetest.unoapppage.UnoAppLoginPage;
 import ui.AbstractAutoUITest;
@@ -53,7 +52,6 @@ public class GreenScreenToRCPVerificationTest extends AbstractAutoUITest {
         } else {
             getPage(CashStoragePage.class)
                     .verify_cash_storage_details(clubNumber);
-
         }
     }
 
@@ -85,7 +83,60 @@ public class GreenScreenToRCPVerificationTest extends AbstractAutoUITest {
                     .verify_payor_profile_from_green_screen(clubNumber);
         }
     }
+    @Test(description = "Verifying ABC Rates", dataProvider = "migration-cash-storage", dataProviderClass = DataProviderClass.class)
+    @TmsLink("A30TP-28338")
+    public void verifyABCRate(String clubNumber) {
+        log.info("Verifying ABC Rates has started ...");
+        setTestResultOnXRay("A30TP-28338");
+        if (env.getConfigPropertyValue(clubNumber, TEST_STATUS).equalsIgnoreCase("Fail")) {
+            throw new SkipException("Test Case has been Failed for fetching Data from Green Screen" + clubNumber);
+        }
+        else
+        {
+            getPage(ABCRatePage.class)
+                    .verify_abc_rate_details(clubNumber);
+        }
 
+    }
+
+    @Test(description = "Verifying Item And Item Category details",dataProvider = "migration-cash-storage", dataProviderClass = DataProviderClass.class)
+    @TmsLink("A30TP-10722")
+    public void verifyItemAndItemCategoryDetails(String clubNumber) {
+        log.info("Verifying Item And Item Category details");
+        setTestResultOnXRay("A30TP-10722");
+        if (env.getConfigPropertyValue(clubNumber, TEST_STATUS).equalsIgnoreCase("Fail")) {
+            throw new SkipException("Test Case has been Failed for fetching Data from Green Screen  " + clubNumber + "  Error is :" + env.getConfigPropertyValue(clubNumber, ERROR_MESSAGE));
+        } else {
+            getPage(CatalogPage.class)
+                    .verify_categories_details(clubNumber)
+                    .verify_catalog_item_details(clubNumber);
+        }
+    }
+    @Test(description = "Verifying Deduction and Reimbursement", dataProvider = "migration-cash-storage", dataProviderClass = DataProviderClass.class)
+    @TmsLink("A30TP-18556")
+    public void verifyDeductionAndReimbursement(String clubNumber) {
+        log.info("Verifying Deduction and Reimbursement has started ...");
+        setTestResultOnXRay("A30TP-18556");
+        if (env.getConfigPropertyValue(clubNumber, TEST_STATUS).equalsIgnoreCase("Fail")) {
+            throw new SkipException("Test Case has been Failed for fetching Data from Green Screen" + clubNumber);
+        } else {
+            getPage(LocationPaymentPage.class)
+                    .verify_payment_details(clubNumber);
+        }
+    }
+
+    @Test(description = "Verifying Item Fee details",dataProvider = "migration-cash-storage", dataProviderClass = DataProviderClass.class)
+    @TmsLink("A30TP-11880")
+    public void verifyItemFeeDetails(String clubNumber) {
+        log.info("Verifying Item Fee details");
+        setTestResultOnXRay("A30TP-11880");
+        if (env.getConfigPropertyValue(clubNumber, TEST_STATUS).equalsIgnoreCase("Fail")) {
+            throw new SkipException("Test Case has been Failed for fetching Data from Green Screen  " + clubNumber + "  Error is :" + env.getConfigPropertyValue(clubNumber, ERROR_MESSAGE));
+        } else {
+            getPage(CatalogPage.class)
+                    .verify_item_fee_details(clubNumber);
+        }
+    }
     @Test(description = "Logout from Uno Application")
     @TmsLink("A30TP-8219")
     public void unoAppLogout() {

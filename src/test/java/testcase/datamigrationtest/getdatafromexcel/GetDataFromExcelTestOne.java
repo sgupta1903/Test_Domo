@@ -25,15 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class GetDataFromExcelTest extends AbstractAutoUITest {
+public class GetDataFromExcelTestOne extends AbstractAutoUITest {
     Ini ini = new Wini(this.getClass().getResourceAsStream('/' + ServicePropertyFileReader.getInstance("env").getPropertyValue("env") + '/' + "property.ini"));
     EnvProperty readExcelProperty = new EnvProperty(ini);
-    String filePath = System.getProperty("user.dir") + readExcelProperty.getConfigPropertyValue("EXCEL", "path");
+    String filePath = System.getProperty("user.dir") + readExcelProperty.getConfigPropertyValue("EXCEL", "path1");
     String sheetName = readExcelProperty.getConfigPropertyValue("EXCEL", "sheetName");
     Map<String, String> getData = new HashMap<>();
     DataBaseHandler dBConnection = getDBClientData(readExcelProperty, "DB_CONNECTION");
 
-    public GetDataFromExcelTest() throws IOException {
+    public GetDataFromExcelTestOne() throws IOException {
     }
 
     public void dbConnection() throws IOException {
@@ -48,8 +48,8 @@ public class GetDataFromExcelTest extends AbstractAutoUITest {
             log.info("clubNumber" + ":" + clubNumber);
             List<String> valueList = new ArrayList<String>(getData.values());
             String[] club1 = valueList.get(0).split(",");
-            int final1 = (club1.length / 2) + 1;
-            int Initial = 0;
+            int final1 = ((club1.length / 2) * 2);
+            int Initial = (club1.length / 2) + 1;
             getExcelClient()
                     .write_excel_dm(getData, filePath, clubNumber, final1, Initial);
         }
@@ -57,10 +57,10 @@ public class GetDataFromExcelTest extends AbstractAutoUITest {
 
     @Factory(dataProvider = "excelData")
     private Object[] factoryMethod(String clubNumber, String memberNumber) {
-        ObcToUnoAppTest instance = new ObcToUnoAppTest(clubNumber, memberNumber);
+        ObcToUnoAppTest instance1 = new ObcToUnoAppTest(clubNumber, memberNumber);
         log.info(clubNumber + ":" + memberNumber);
         return new Object[]{
-                instance
+                instance1
         };
     }
 

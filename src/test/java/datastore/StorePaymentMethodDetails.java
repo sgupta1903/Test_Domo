@@ -15,6 +15,7 @@ public class StorePaymentMethodDetails {
     String bankAccountType;
     String expirationDate;
     String creditCardType;
+    String payorPGName;
 
     public StorePaymentMethodDetails() {
     }

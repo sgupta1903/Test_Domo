@@ -3,22 +3,19 @@ package pagetest.datamigrationpage;
 import config.EnvProperty;
 import helper.DataBaseHandler;
 import io.qameta.allure.Step;
-import org.ini4j.Ini;
-import org.ini4j.Wini;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import pagetest.businessapppage.AbcCommonAbstractPage;
 
-import java.io.IOException;
 import java.util.*;
 
 import static helper.AppConstants.*;
 import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 
 public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
-    EnvProperty envProperty = EnvProperty.getInstance(CASH_STORAGE_INI);
+    EnvProperty envProperty = EnvProperty.getInstance(OUTPUT_INI);
     List<Map<String, String>> categoriesMap = new ArrayList<>();
-
+    List<Map<String, String>> updatedCategoriesMap = null;
     private By businessLink = By.xpath("//a[@href='/uno-app/app/client-management']");
     private By edit = By.xpath("//i[contains(@data-abc-id,'ectionHeaderButtonIcon')]");
     private By itemName = By.xpath("//input[@id='itemName']");
@@ -38,7 +35,7 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
     private By description = By.xpath("//input[@id='itemAutoPay']//following::textarea[1]");
     protected String itemsName = "//table[contains(@class,'ui-infinite-table')]//tbody//tr[%s]//td[1]//span";
     protected String itemsClick = "//table[contains(@class,'ui-infinite-table')]//tbody//tr[%s]//td[1]";
-    private By locationBtn = By.xpath("//a[@href='/uno-app/app/client-management']");
+    private By locationBtn = By.xpath("//i[@data-abc-id='buildingIcon']");
     private By closeButton = By.xpath("//button[@data-abc-id='closeDrawerButton']");
     private By searchLocation = By.xpath("//input[@id='searchInput']");
     private By itemAutoPay = By.xpath("//input[@id='itemAutoPay']");
@@ -46,24 +43,16 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
     private By itemCategoryTaxRate = By.xpath("//input[@id='itemCategoryTaxRate']");
     private By taxRateOverride = By.xpath("//input[@id='itemCategoryTaxRateOverride']");
     private By taxCode = By.xpath("//input[@id='itemCategoryTaxCodeInput']");
+    private By orgSwitcherClearIcon = By.xpath("//i[@data-abc-id='organizationSwitcherInputIconAfter']");
 
     private String locNo1 = "//td[contains(text(),'";
     private String locNo2 = "')]";
     String dataAbcId = "itemListRow";
     String dataAbcId2 = "itemCategoriesListRow";
 
-    private String itemRowXpath = "//tr[@data-abc-id='%s']/td/span[text()='%s']/../../td/span[text()='%s']/../../td/span[text()='%s']/../../td/span[text()='%s']";
+    private String itemRowXpath = "//tr[@data-abc-id='%s']/td/span[text()='%s']/../../td/span[text()='%s']/../../td/span[text()='%s']";
     private String CategoriesRowXpath = "//tr[@data-abc-id='%s']/td/span[text()='%s']/../../td/span[text()='%s']";
-
-    Ini ini;
-
-    {
-        try {
-            ini = new Wini(this.getClass().getResourceAsStream('/' + "cashstorage.ini"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private String feeItemRowXpath = "//tr[@data-abc-id='%s']/td/span[text()='%s']/../../td/span[text()='%s']";
 
     public By get_categories_row_xpath(String dataAbcId2, String itemCategoryName, String itemCategoryDescription) {
         return By.xpath(String.format(CategoriesRowXpath, dataAbcId2, itemCategoryName, itemCategoryDescription));
@@ -76,14 +65,24 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
     }
 
 
-    public By get_item_row_xpath(String dataAbcId, String itemName, String itemType, String itemDescription, String itemCategory) {
-        return By.xpath(String.format(itemRowXpath, dataAbcId, itemName, itemType, itemDescription, itemCategory));
+    public By get_item_row_xpath(String dataAbcId, String itemName, String itemDescription, String itemCategory) {
+        return By.xpath(String.format(itemRowXpath, dataAbcId, itemName, itemDescription, itemCategory));
     }
 
     @Step("Verifying item")
-    public CatalogPage verify_catalog_item(String itemName, String itemType, String itemDescription, String itemCategory) {
-        verify(visibilityOfAllElementsLocatedBy(get_item_row_xpath(dataAbcId, itemName, itemType, itemDescription, itemCategory)));
+    public CatalogPage verify_catalog_item(String itemName, String itemDescription, String itemCategory) {
+        verify(visibilityOfAllElementsLocatedBy(get_item_row_xpath(dataAbcId, itemName, itemDescription, itemCategory)));
         return me();
+    }
+
+    @Step("Verifying Item Fee")
+    public CatalogPage verify_catalog_item_fee(String itemName, String itemType) {
+        verify(visibilityOfAllElementsLocatedBy(get_item_fee_row_xpath(dataAbcId, itemName,itemType)));
+        return me();
+    }
+
+    public By get_item_fee_row_xpath(String dataAbcId, String itemName ,String itemType) {
+        return By.xpath(String.format(feeItemRowXpath, dataAbcId, itemName, itemType));
     }
 
     @Step("Click on Location")
@@ -320,19 +319,24 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
 
     public void parse_my_data(String str) {
         Map<String, String> newMap = new HashMap<>();
+        String completeDescription="";
         logger.info(str);
         ArrayList<String> myList = new ArrayList<String>(Arrays.asList(str.split(",")));
 
         newMap.put("clubNumbers", myList.get(0));
         newMap.put("itemCategoryName", myList.get(1));
         newMap.put("itemCategoryDescription", myList.get(2));
-
+        for(int i=2;i<myList.size()-1;i++)
+        {
+            completeDescription= completeDescription+" "+ myList.get(i);
+        }
+        newMap.put("itemCategoryDescription", completeDescription.trim());
         categoriesMap.add(newMap);
     }
 
     public void get_categories_details(String clubNumber) {
         String finalcategoriesDetails = null;
-        Map<String, String> categoriesMap = ini.get(clubNumber);
+        Map<String, String> categoriesMap = envProperty.get(clubNumber);
         for (Map.Entry<String, String> entry : categoriesMap.entrySet()) {
             String categoriesData[] = entry.getValue().split("\t");
             if ("Pass".equalsIgnoreCase(categoriesData[0])) {
@@ -362,29 +366,72 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
         return String.valueOf(categories).trim();
     }
 
+    public void get_item_fee_details(String clubNumber) {
+        String finalcategoriesDetails = null;
+        Map<String, String> categoriesMap = envProperty.get(clubNumber);
+        for (Map.Entry<String, String> entry : categoriesMap.entrySet()) {
+            String categoriesData[] = entry.getValue().split("\t");
+            if ("Pass".equalsIgnoreCase(categoriesData[0])) {
+                System.out.println("This is a status");
+            } else {
+                finalcategoriesDetails = parse_raw_data(entry.getValue().trim());
+                parse_item_fee_data(finalcategoriesDetails);
+            }
+        }
+    }
 
-    public CatalogPage verify_catalog_item_detais(String clubNumber) {
+    public void parse_item_fee_data(String str) {
+        Map<String, String> newMap = new HashMap<>();
+        logger.info(str);
+        ArrayList<String> myList = new ArrayList<String>(Arrays.asList(str.split(",")));
+
+        newMap.put("clubNumber", myList.get(0));
+        newMap.put("feeItemName", myList.get(3));
+        newMap.put("itemType", "Fee");
+        categoriesMap.add(newMap);
+    }
+
+    public void remove_duplicate(List<Map<String, String>> categoriesMap)
+    {
+        Set<Map<String, String>> feeItemSet = new LinkedHashSet<Map<String, String>>(categoriesMap);
+        updatedCategoriesMap = new ArrayList<>(feeItemSet);
+    }
+
+    public void add_freeze_fee(List<Map<String, String>> categoriesMap)
+    {
+        Map<String, String> newMap = new HashMap<>();
+        newMap.put("itemCategoryName", "FREEZEFEE");
+        newMap.put("itemCategoryDescription", "FREEZEFEE");
+        categoriesMap.add(newMap);
+    }
+
+    public CatalogPage verify_catalog_item_details(String clubNumber) {
         click(locationBtn);
         click_location(clubNumber);
         wait_until(2);
 
         click(catalogTab);
 
-        verify_catalog_item(envProperty.getConfigPropertyValue(clubNumber, "itemName"), envProperty.getConfigPropertyValue(clubNumber, "itemType"),
-                envProperty.getConfigPropertyValue(clubNumber, "itemDescription"), envProperty.getConfigPropertyValue(clubNumber, "itemCategory"));
-
-        click(get_item_row_xpath(dataAbcId, envProperty.getConfigPropertyValue(clubNumber, "itemName"), envProperty.getConfigPropertyValue(clubNumber, "itemType"),
-                envProperty.getConfigPropertyValue(clubNumber, "itemDescription"), envProperty.getConfigPropertyValue(clubNumber, "itemCategory")));
-
         try {
-            verify_all(
-                    () -> verify_item_name(envProperty.getConfigPropertyValue(clubNumber, "itemName")),
-                    () -> verify_item_type(envProperty.getConfigPropertyValue(clubNumber, "itemType")),
-                    () -> verify_Category_Name(envProperty.getConfigPropertyValue(clubNumber, "itemCategory")),
-                    () -> verify_item_description(envProperty.getConfigPropertyValue(clubNumber, "itemDescription"))
-            );
-        } finally {
-            click(closeButton);
+            for (int i = 0; i < categoriesMap.size(); i++) {
+                verify_catalog_item(categoriesMap.get(i).get("itemCategoryName"),categoriesMap.get(i).get("itemCategoryDescription"), categoriesMap.get(i).get("itemCategoryName"));
+                wait_until(1);
+                mouseover_with_click(get_item_row_xpath(dataAbcId, categoriesMap.get(i).get("itemCategoryName"),categoriesMap.get(i).get("itemCategoryDescription"), categoriesMap.get(i).get("itemCategoryName")));
+
+                int finalI = i;
+                try {
+                    verify_all(
+                            () -> verify_item_name(categoriesMap.get(finalI).get("itemCategoryName")),
+                            () -> verify_Category_Name(categoriesMap.get(finalI).get("itemCategoryName")),
+                            () -> verify_item_description(categoriesMap.get(finalI).get("itemCategoryDescription"))
+                    );
+                } finally {
+                    click(closeButton);
+                }
+            }
+        }
+        finally {
+            clearing_organisation();
         }
 
         return me();
@@ -398,23 +445,69 @@ public class CatalogPage extends AbcCommonAbstractPage<CatalogPage> {
         click(catalogTab);
         click_categories_radio_btn();
         get_categories_details(clubNumber);
+        add_freeze_fee(categoriesMap);
+        try {
+            for (int i = 0; i < categoriesMap.size(); i++) {
+                verify_categories(categoriesMap.get(i).get("itemCategoryName"), categoriesMap.get(i).get("itemCategoryDescription"));
+                wait_until(1);
+                mouseover_with_click(get_categories_row_xpath(dataAbcId2, categoriesMap.get(i).get("itemCategoryName"), categoriesMap.get(i).get("itemCategoryDescription")));
 
-        for (int i = 0; i < categoriesMap.size(); ++i) {
-            verify_categories(categoriesMap.get(i).get("itemCategoryName"), categoriesMap.get(i).get("itemCategoryDescription"));
-            click(get_categories_row_xpath(dataAbcId2, categoriesMap.get(i).get("itemCategoryName"), categoriesMap.get(i).get("itemCategoryDescription")));
-            int finalI = i;
-            try {
-                verify_all(
-                        () -> verify_item_Category_Name(categoriesMap.get(finalI).get("itemCategoryName")),
-                        () -> verify_item_category_description(categoriesMap.get(finalI).get("itemCategoryDescription"))
-                );
-            } finally {
-                click(closeButton);
+                int finalI = i;
+                try {
+                    verify_all(
+                            () -> verify_item_Category_Name(categoriesMap.get(finalI).get("itemCategoryName")),
+                            () -> verify_item_category_description(categoriesMap.get(finalI).get("itemCategoryDescription"))
+                    );
+                } finally {
+                    click(closeButton);
+                }
             }
+        }
+        finally{
+            clearing_organisation();
         }
         return me();
     }
+
+    public CatalogPage verify_item_fee_details(String clubNumber) {
+        click(locationBtn);
+        click_location(clubNumber);
+        wait_until(2);
+
+        click(catalogTab);
+
+        get_item_fee_details(clubNumber);
+        remove_duplicate(categoriesMap);
+        try {
+            for (int i = 0; i < updatedCategoriesMap.size(); i++) {
+                verify_catalog_item_fee(updatedCategoriesMap.get(i).get("feeItemName"),updatedCategoriesMap.get(i).get("itemType"));
+                wait_until(1);
+                mouseover_with_click(get_item_fee_row_xpath(dataAbcId,updatedCategoriesMap.get(i).get("feeItemName"),updatedCategoriesMap.get(i).get("itemType")));
+
+                int finalI = i;
+                try {
+                    verify_all(
+                            () -> verify_item_name(updatedCategoriesMap.get(finalI).get("feeItemName")),
+                            () -> verify_item_type(updatedCategoriesMap.get(finalI).get("itemType"))
+                    );
+                } finally {
+                    click(closeButton);
+                }
+            }
+        }
+        finally{
+            clearing_organisation();
+        }
+        return me();
+    }
+
+    @Step("Clearing Last organisation tested from organisation search box")
+    public CatalogPage clearing_organisation() {
+        click_org_switcher_clear_icon();
+        return me();
+    }
+    public CatalogPage click_org_switcher_clear_icon(){
+        click(orgSwitcherClearIcon);
+        return me();
+    }
 }
-
-
-

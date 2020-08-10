@@ -49,6 +49,8 @@ public class WalletPage extends AbcCommonAbstractPage<WalletPage> {
     private By creditCardType = By.xpath("//div//input[@id='creditCardTypeInput']");
     private By creditType = By.xpath("//time[@data-abc-id='lastFour']");
     private By expiryDate = By.xpath("//td[@data-abc-id='expirationDate']");
+    private By accountHolderOnRow = By.xpath("//strong[@data-abc-id='cardLabelText']//following::td[1]");
+
     private By closeButton = By.xpath("//i[@data-abc-id='closeDrawerButtonIcon']");
     //private By closeButton = By.xpath("//button[@data-abc-id='closeDrawerButton']");
     private By statementPM = By.xpath("//span[contains(text(),'Statement')]");
@@ -171,7 +173,12 @@ public class WalletPage extends AbcCommonAbstractPage<WalletPage> {
     @Step("Verifying Account Holder Name on Payment method row")
     public WalletPage verify_account_holder_name(String accountHolderName) {
         logger.info("Verifying Account Holder Name on Payment method row");
-        verify_value_matches(find_element_text(this.accountHolderName), accountHolderName);
+        if(is_text_present_on_page(accountHolderName)){
+            logger.info("Account holder present on page");
+        }
+        else {
+            Assert.assertTrue(false,accountHolderName + " not present on page");
+        }
         return me();
     }
 
@@ -273,6 +280,7 @@ public class WalletPage extends AbcCommonAbstractPage<WalletPage> {
     @Step("Verifying Credit Type with last four digit")
     public WalletPage verify_credit_type_with_last_four_digit(String creditType) {
         logger.info("Verifying Credit Type with last four digit");
+
         is_text_present_on_page(creditType.toLowerCase());
         return me();
     }
@@ -387,44 +395,52 @@ public class WalletPage extends AbcCommonAbstractPage<WalletPage> {
             if (payment_method.equals("EF")) {
                 click_payment_method_list();
 
-                verify_all(
-                        () -> verify_routing_number(storePaymentMethodDetails.getRoutingNumber()),
-                        () -> verify_account_number_last_four(storePaymentMethodDetails.getLastFour()),
-                        () -> verify_bank_account_type(storePaymentMethodDetails.getBankAccountType().trim()),
-                        () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName())
-                );
-                storePaymentMethodDetails.setPayorName(find_element_value(accountHolder));
-                click_close_button();
+                try {
+                    verify_all(
+                            () -> verify_routing_number(storePaymentMethodDetails.getRoutingNumber()),
+                            () -> verify_account_number_last_four(storePaymentMethodDetails.getLastFour()),
+                            () -> verify_bank_account_type(storePaymentMethodDetails.getBankAccountType().trim()),
+                            () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName())
+                    );
+                }
+                finally {
+                    storePaymentMethodDetails.setPayorPGName(find_element_value(accountHolder));
+                    logger.info("Payor PG Name: " + storePaymentMethodDetails.getPayorPGName());
+                    click_close_button();
+                }
+
             } else if (payment_method.equals(CREDIT_CARD)) {
 
                 String[] expirationDateWithYear = storePaymentMethodDetails.getExpirationDate().split("/");
                 String expYear = EXPIRATION_YEAR_PREFIX + expirationDateWithYear[1];
                 int expMonth = Integer.parseInt(expirationDateWithYear[0]);
 
-                verify_all(
-                        () -> verify_credit_type_with_last_four_digit(storePaymentMethodDetails.getCreditCardType() + "(" + storePaymentMethodDetails.getLastFour() + ")"),
-                        () -> verify_expiration_details(storePaymentMethodDetails.getExpirationDate()),
-                        () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName())
-                );
-
-                click_payment_method_list();
-
                 try {
                     verify_all(
-                            () -> verify_credit_card_last_four(storePaymentMethodDetails.getLastFour()),
-                            () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName()),
-                            () -> verify_expiration_year(expYear),
-                            () -> verify_payment_method_type(storePaymentMethodDetails.getPaymentType()),
-                            () -> verify_credit_card_type(CREDIT_CARD_TYPE),
-                            () -> verify_expiration_month(Month.of(expMonth).name().toLowerCase()),
-                            () -> verify_payment_method_zip_code(storeMemberDetails)
+                            () -> verify_credit_type_with_last_four_digit(storePaymentMethodDetails.getCreditCardType() + "(" + storePaymentMethodDetails.getLastFour() + ")"),
+                            () -> verify_expiration_details(storePaymentMethodDetails.getExpirationDate()),
+                            () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName())
                     );
                 }
-                // storePaymentMethodDetails.setPayorName(find_element_value(accountHolder));
                 finally {
-                    click_close_button();
+                    click_payment_method_list();
+                    try {
+                        verify_all(
+                                () -> verify_credit_card_last_four(storePaymentMethodDetails.getLastFour()),
+                                () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName()),
+                                () -> verify_expiration_year(expYear),
+                                () -> verify_payment_method_type(storePaymentMethodDetails.getPaymentType()),
+                                () -> verify_credit_card_type(CREDIT_CARD_TYPE),
+                                () -> verify_expiration_month(Month.of(expMonth).name().toLowerCase()),
+                                () -> verify_payment_method_zip_code(storeMemberDetails)
+                        );
+                    }
+                    finally {
+                        storePaymentMethodDetails.setPayorPGName(find_element_value(accountHolder));
+                        logger.info("Payor PG Name: " + storePaymentMethodDetails.getPayorPGName());
+                        click_close_button();
+                    }
                 }
-
             }
         }
         return me();

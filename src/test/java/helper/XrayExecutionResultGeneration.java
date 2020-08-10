@@ -44,11 +44,11 @@ public class XrayExecutionResultGeneration {
 
             requestBodyFile = new String(Files.readAllBytes(Paths.get(absolutePath + "")));
             LOGGER.info("File is" + requestBodyFile);
-            Response requestResponse = RestAssured.given().header(AUTHORIZATION_HEADER, token)
-                    .header(CONTENT_TYPE, TEXT_XML)
-                    .body(requestBodyFile).expect().statusCode(200).when()
-                    .post(XRAY_TESTNG_EXECUTION_CREATION_URL).then().extract().response();
-            LOGGER.info("#################" + requestResponse.asString());
+//            Response requestResponse = RestAssured.given().header(AUTHORIZATION_HEADER, token)
+//                    .header(CONTENT_TYPE, TEXT_XML)
+//                    .body(requestBodyFile).expect().statusCode(200).when()
+//                    .post(XRAY_TESTNG_EXECUTION_CREATION_URL).then().extract().response();
+//            LOGGER.info("#################" + requestResponse.asString());
 
         } catch (
                 IOException e) {

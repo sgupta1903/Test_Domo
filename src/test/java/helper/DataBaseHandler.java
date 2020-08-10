@@ -162,8 +162,8 @@ public class DataBaseHandler
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(getConfigParamValue("driverClassName"));
         ds.setUrl(getConfigParamValue("url"));
-        ds.setUsername(System.getenv(getConfigParamValue("dbUserName")));
-        ds.setPassword(System.getenv(getConfigParamValue("dbPassword")));
+        ds.setUsername(getConfigParamValue("UserName"));
+        ds.setPassword(getConfigParamValue("Password"));
         return ds;
     }
 

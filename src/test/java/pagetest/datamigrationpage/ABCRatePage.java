@@ -21,13 +21,13 @@ import static util.UtilityGeneric.get_converted_date;
 
 
 public class ABCRatePage extends AbcCommonAbstractPage<ABCRatePage> {
-    EnvProperty envProperty = EnvProperty.getInstance(CASH_STORAGE_INI);
+    EnvProperty envProperty = EnvProperty.getInstance(OUTPUT_INI);
 
     static String rateType;
     private By abcRateTab = By.xpath("//i[@data-abc-id='ratesTitleIcon']");
     private By editButton = By.xpath("//*[@data-abc-id='editButton']");
     private By rateDropdown = By.xpath("//div[@data-abc-id='ABCRatesOptionInput']");
-    private By closeButton=By.xpath("//button[@data-abc-id='closeDrawerButton']");
+    private By closeButton = By.xpath("//button[@data-abc-id='closeDrawerButton']");
     //Abc Fee
     private By abcFeeBasePercentage = By.xpath("//input[@id='rates[0].BasePercentage']");
     private By abcFeePerTransaction = By.xpath("//input[@id='rates[0].PerTransaction']");
@@ -103,11 +103,12 @@ public class ABCRatePage extends AbcCommonAbstractPage<ABCRatePage> {
     private By searchLocation = By.xpath("//input[@id='searchInput']");
     private String locNo1 = "//td[contains(text(),'";
     private String locNo2 = "')]";
-    private By locationBtn = By.xpath("//a[@href='/uno-app/app/client-management']");
+    private By locationBtn = By.xpath("//i[@data-abc-id='buildingIcon']");
     private String rateType1 = "//td[contains(text(),'";
     private String rateType2 = "')]";
     private String startDate1 = "//td[contains(text(),'";
     private String startDate2 = "')]/following-sibling::td[1]";
+    private By orgSwitcherClearIcon = By.xpath("//i[@data-abc-id='organizationSwitcherInputIconAfter']");
 
     @Step("Click on Location")
     private ABCRatePage click_location(String clubNumber) {
@@ -122,7 +123,7 @@ public class ABCRatePage extends AbcCommonAbstractPage<ABCRatePage> {
     }
 
     @Step("Click Close Button")
-    private ABCRatePage click_close_button(){
+    private ABCRatePage click_close_button() {
         logger.info("Clicking on Close Button");
         click(closeButton);
         return me();
@@ -539,41 +540,81 @@ public class ABCRatePage extends AbcCommonAbstractPage<ABCRatePage> {
         verify_element_by_value(statementPostageEndDate, expectedEndDate);
         return me();
     }
+    private String get_abc_fee_base_percentage(String clubNumber) {
+        logger.info("Fetching ABC Fee base percentage");
+        String abcFeeBasePercentage = envProperty.getConfigPropertyValue(clubNumber, "ABC_FEE_BASE_PERCENTAGE");
+        if(abcFeeBasePercentage.isEmpty()){
+            abcFeeBasePercentage = envProperty.getConfigPropertyValue(clubNumber, "VOLUME_PRICING_BASE_PERCENTAGE");
+        }
+        return abcFeeBasePercentage;
+    }
+    private String get_abc_fee_per_transaction(String clubNumber) {
+        logger.info("Fetching ABC Fee per transaction");
+        String abcFeePerTransaction = envProperty.getConfigPropertyValue(clubNumber, "ABC_FEE_PER_TRANSACTION").replace("$","");
+        if(abcFeePerTransaction.isEmpty()) {
+            abcFeePerTransaction = envProperty.getConfigPropertyValue(clubNumber, "VOLUME_PRICING_PER_TRANSACTION");
+        }
+        if(!abcFeePerTransaction.isEmpty()) {
+            abcFeePerTransaction = "$" + get_two_decimal_point_value(abcFeePerTransaction);
+        }
 
-    public ABCRatePage verify_abc_rate_details(String clubNumber){
+        return abcFeePerTransaction;
+    }
+
+    private String get_per_transaction_data(String clubNumber, String FeeType) {
+        logger.info("Fetching data for " + FeeType + " per transaction");
+        String perTransactionData = envProperty.getConfigPropertyValue(clubNumber, FeeType).replace("$","");
+        if(!perTransactionData.isEmpty()) {
+            perTransactionData = "$" + get_two_decimal_point_value(perTransactionData);
+        }
+
+        return perTransactionData;
+    }
+
+    public ABCRatePage verify_abc_rate_details(String clubNumber) {
         logger.info("Verifying Abc Fee  Details");
         click(locationBtn);
         click_location(clubNumber);
         wait_until(2);
         click_abc_rate_tab();
         click(editButton);
-        try {
-            verify_all(
-                    () -> verify_abc_fee_base_percentage(envProperty.getConfigPropertyValue(clubNumber, "ABC_FEE_BASE_PERCENTAGE")),
-                    () -> verify_abc_fee_per_transaction(envProperty.getConfigPropertyValue(clubNumber, "ABC_FEE_PER_TRANSACTION")),
-                    () -> verify_ach_fee_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"ACH_BASE_PERCENTAGE")),
-                    () -> verify_ach_fee_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"ACH_PER_TRANSACTION")),
-                    () -> verify_statement_payment_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"COUPON_BASE_PERCENTAGE")),
-                    () -> verify_statement_payment_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"COUPON_PER_TRANSACTION")),
-                    () -> verify_club_level_fee_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"CLUB_LEVEL_FEE_BASE_PERCENTAGE")),
-                    () -> verify_club_level_fee_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"CLUB_LEVEL_FEE_PER_TRANSACTION")),
-                    () -> verify_american_express_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"AMERICAN_EXPRESS_BASE_PERCENTAGE")),
-                    () -> verify_american_express_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"AMERICAN_EXPRESS_PER_TRANSACTION")),
-                    () -> verify_discover_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"DISCOVER_BASE_PERCENTAGE")),
-                    () -> verify_discover_card_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"DISCOVER_PER_TRANSACTION")),
-                    () -> verify_master_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"MASTER_CARD_BASE_PERCENTAGE")),
-                    () -> verify_master_card_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"MASTER_CARD_PER_TRANSACTION")),
-                    () -> verify_visa_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"VISA_BASE_PERCENTAGE")),
-                    () -> verify_visa_card_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"VISA_PER_TRANSACTION")),
-                    () -> verify_pay_at_club_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"PAYMENTS_AT_CLUB_BASE_PERCENTAGE")),
-                    () -> verify_pay_at_club_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"PAYMENTS_AT_CLUB_PER_TRANSACTION")),
-                    () -> verify_charge_back_per_transaction("$" + envProperty.getConfigPropertyValue(clubNumber,"CC_CHARGE_BACK_PER_TRANSACTION").substring(0,5)),
-                    ()->verify_pre_note_fee_per_transaction(envProperty.getConfigPropertyValue(clubNumber,"PRE_NOTE_PER_TRANSACTION"))
-            );
-        }
+       try{
+           verify_all(
+                   () -> verify_abc_fee_base_percentage(get_abc_fee_base_percentage(clubNumber)),
+                   () -> verify_abc_fee_per_transaction(get_abc_fee_per_transaction(clubNumber)),
+                   () -> verify_ach_fee_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"ACH_BASE_PERCENTAGE")),
+                   () -> verify_ach_fee_per_transaction(get_per_transaction_data(clubNumber,"ACH_PER_TRANSACTION")),
+                   () -> verify_statement_payment_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"COUPON_BASE_PERCENTAGE")),
+                   () -> verify_statement_payment_per_transaction(get_per_transaction_data(clubNumber,"COUPON_PER_TRANSACTION")),
+                   () -> verify_club_level_fee_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"CLUB_LEVEL_FEE_BASE_PERCENTAGE")),
+                   () -> verify_club_level_fee_per_transaction(get_per_transaction_data(clubNumber,"CLUB_LEVEL_FEE_PER_TRANSACTION")),
+                   () -> verify_american_express_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"AMERICAN_EXPRESS_BASE_PERCENTAGE")),
+                   () -> verify_american_express_per_transaction(get_per_transaction_data(clubNumber,"AMERICAN_EXPRESS_PER_TRANSACTION")),
+                   () -> verify_discover_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"DISCOVER_BASE_PERCENTAGE")),
+                   () -> verify_discover_card_per_transaction(get_per_transaction_data(clubNumber,"DISCOVER_PER_TRANSACTION")),
+                   () -> verify_master_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"MASTER_CARD_BASE_PERCENTAGE")),
+                   () -> verify_master_card_per_transaction(get_per_transaction_data(clubNumber,"MASTER_CARD_PER_TRANSACTION")),
+                   () -> verify_visa_card_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"VISA_BASE_PERCENTAGE")),
+                   () -> verify_visa_card_per_transaction(get_per_transaction_data(clubNumber,"VISA_PER_TRANSACTION")),
+                   () -> verify_pay_at_club_base_percentage(envProperty.getConfigPropertyValue(clubNumber,"PAYMENTS_AT_CLUB_BASE_PERCENTAGE")),
+                   () -> verify_pay_at_club_per_transaction(get_per_transaction_data(clubNumber,"PAYMENTS_AT_CLUB_PER_TRANSACTION")),
+                   () -> verify_charge_back_per_transaction(get_per_transaction_data(clubNumber,"CC_CHARGE_BACK_PER_TRANSACTION")),
+                   ()->verify_pre_note_fee_per_transaction(get_per_transaction_data(clubNumber,"PRE_NOTE_PER_TRANSACTION"))
+           );
+                }
         finally {
             click_close_button();
+           clearing_organisation();
         }
+        return me();
+    }
+    @Step("Clearing Last organisation tested from organisation search box")
+    public ABCRatePage clearing_organisation() {
+        click_org_switcher_clear_icon();
+        return me();
+    }
+    public ABCRatePage click_org_switcher_clear_icon(){
+        click(orgSwitcherClearIcon);
         return me();
     }
 }

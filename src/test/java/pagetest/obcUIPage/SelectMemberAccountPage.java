@@ -19,7 +19,7 @@ public class SelectMemberAccountPage extends AbcCommonAbstractPage<SelectMemberA
     @Step("Enter member number")
     public SelectMemberAccountPage enter_member_number(String memberNumber){
         logger.info( "Entering Member Number->"+memberNumber );
-        enter_member_num(memberNumber);
+        enter_member_num(memberNumber.trim());
         enter_by_key();
         return me();
     }

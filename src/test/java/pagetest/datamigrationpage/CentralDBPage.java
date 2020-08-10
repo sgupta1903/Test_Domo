@@ -270,5 +270,16 @@ public class CentralDBPage extends AbcCommonAbstractPage<CentralDBPage> {
         return subscriptionInfo;
     }
 
+    public Map get_member_list(String clubNumber, DataBaseHandler dataBaseHandler) {
+        logger.info("Fetching Member List from DB");
+        Map map = dataBaseHandler.executeSql("select club_number,member_number from central.member_info " +
+                "where club_number in ('"+clubNumber+"') and member_sequence_number='9'");
+        logger.info("Fetching Member List from DB: "+map);
+        Map<String, Object> getData = new HashMap<>();
+        getData.put(map.get("club_number").toString().replaceAll(REGEX, ""), map.get("member_number").toString().replaceAll(REGEX, ""));
+        logger.info("Value of Map: "+getData);
+        return getData;
+    }
+
    }
 

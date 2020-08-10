@@ -1,16 +1,15 @@
 package pagetest.datamigrationpage;
 
 import config.EnvProperty;
-import datastore.StoreAdditionalMemberDetails;
-import datastore.StoreClubDetails;
-import datastore.StoreMemberDetails;
-import datastore.StoreSecondaryMemberDetails;
+import datastore.*;
 import helper.DataBaseHandler;
 import io.qameta.allure.Step;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import pagetest.businessapppage.AbcCommonAbstractPage;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +58,11 @@ public class MemberPage extends AbcCommonAbstractPage<MemberPage> {
     private By badAddress = By.xpath("//input[@id='invalidAddress-Member']");
     private By selectMember = By.xpath("//div[@id='memberSelector']");
     private By memberNoteTab=By.xpath("//i[@data-abc-id='notesTitleIcon']");
+    private By primaryPhoneNumber=By.xpath("//input[@id='primaryPhone-Member']");
+    private By mobilePhone=By.xpath("//input[@id='mobilePhone-Member']");
+    private By workPhone=By.xpath("//input[@id='workPhone-Member']");
+    private By emergencyPhoneNumber=By.xpath("//input[@id='emergencyPhone-Member']");
+
 
     private String memberNoteRowXpath = "//tr[@data-abc-id='%s']/td//div[text()='%s']";
     private String dataAbcId = "notesListRow";
@@ -92,6 +96,30 @@ public class MemberPage extends AbcCommonAbstractPage<MemberPage> {
     public MemberPage verify_member_country(String memberCntry) {
         logger.info("Verifying Member Country ");
         verify_value_matches(find_element_attribute_value(this.memberCountry, "placeholder").toLowerCase(), memberCntry);
+        return me();
+    }
+
+    public MemberPage verify_primary_phone(String expectedPrimaryPhone){
+        logger.info("Verifying primary phone number");
+        verify_element_by_value(primaryPhoneNumber,expectedPrimaryPhone);
+        return me();
+    }
+
+    public MemberPage verify_mobile_phone(String expectedMobilePhone){
+        logger.info("Verifying mobile phone number");
+        verify_element_by_value(mobilePhone,expectedMobilePhone);
+        return me();
+    }
+
+    public MemberPage verify_work_phone(String expectedWorkPhone){
+        logger.info("Verifying work phone number");
+        verify_element_by_value(workPhone,expectedWorkPhone);
+        return me();
+    }
+
+    public MemberPage verify_emergency_phone(String expectedEmergencyPhone){
+        logger.info("Verifying emergency phone number");
+        verify_element_by_value(emergencyPhoneNumber,expectedEmergencyPhone);
         return me();
     }
 
@@ -381,10 +409,22 @@ public class MemberPage extends AbcCommonAbstractPage<MemberPage> {
         return me();
     }
 
-    public MemberPage verify_member_notes_obc() {
+    public MemberPage verify_member_notes_obc(StoreMemberNoteDetails storeMemberNoteDetails) {
         logger.info("Verifying the Member Notes");
         click_member_note_tab();
-        Map<String, String>memberNoteMap=env.get("MEMBER_NOTE");
+        //Map<String, String>memberNoteMap=env.get("MEMBER_NOTE");
+        Map<String, String>memberNoteMap= new HashMap<>();
+        memberNoteMap.put("memberNote1",storeMemberNoteDetails.getMemberNote1());
+        memberNoteMap.put("memberNote2",storeMemberNoteDetails.getMemberNote2());
+        memberNoteMap.put("memberNote3",storeMemberNoteDetails.getMemberNote3());
+        memberNoteMap.put("memberNote4",storeMemberNoteDetails.getMemberNote4());
+        memberNoteMap.put("memberNote5",storeMemberNoteDetails.getMemberNote5());
+        memberNoteMap.put("memberNote6",storeMemberNoteDetails.getMemberNote6());
+        memberNoteMap.put("memberNote7",storeMemberNoteDetails.getMemberNote7());
+        memberNoteMap.put("memberNote8",storeMemberNoteDetails.getMemberNote8());
+        memberNoteMap.put("memberNote9",storeMemberNoteDetails.getMemberNote9());
+        memberNoteMap.put("memberNote10",storeMemberNoteDetails.getMemberNote10());
+
         for(Map.Entry<String, String> entry : memberNoteMap.entrySet()){
             verify_member_note_row(entry.getValue());
         }

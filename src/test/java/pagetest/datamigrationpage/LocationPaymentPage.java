@@ -1,7 +1,6 @@
 package pagetest.datamigrationpage;
 
 import config.EnvProperty;
-import helper.ServicePropertyFileReader;
 import io.qameta.allure.Step;
 import org.ini4j.Ini;
 import org.ini4j.Wini;
@@ -14,17 +13,17 @@ import java.util.*;
 
 import static helper.AppConstants.*;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
-import static util.UtilityGeneric.get_converted_date;
 
 public class LocationPaymentPage extends AbcCommonAbstractPage<LocationPaymentPage> {
 
-    EnvProperty envProperty = EnvProperty.getInstance(CASH_STORAGE_INI);
+    EnvProperty envProperty = EnvProperty.getInstance(OUTPUT_INI);
     //   ReadingDataFromIni readingDataFromIni = new ReadingDataFromIni();
     //Ini ini = new Wini(this.getClass().getResourceAsStream('/' + ServicePropertyFileReader.getInstance(ENV).getPropertyValue(ENV) + '/' + PROPERTY_INI));
-    Ini ini = new Wini(this.getClass().getResourceAsStream('/' + "cashstorage.ini"));
+    Ini ini = new Wini(this.getClass().getResourceAsStream('/' + OUTPUT_INI));
     List<Map<String, String>> mapReimbursement = new ArrayList<>();
     List<Map<String, String>> mapDeduction = new ArrayList<>();
 
+    private By orgSwitcherClearIcon = By.xpath("//i[@data-abc-id='organizationSwitcherInputIconAfter']");
     //Deduction Row
     private By deductionsTab = By.xpath("//*[@data-value='Deductions']");
     private By reimbursementsTab = By.xpath("//*[@data-value='Reimbursements']");
@@ -63,7 +62,7 @@ public class LocationPaymentPage extends AbcCommonAbstractPage<LocationPaymentPa
     private By deductionRow = By.xpath("//*[@data-value='Deductions']//following::td[1]");
     private By closeButton = By.xpath("//button//i[@data-abc-id='closeDrawerButtonIcon']");
     private By deductionDescription = By.xpath("//input[@id='glDepartment']//following::textarea[2]");
-    private By locationBtn = By.xpath("//a[@href='/uno-app/app/client-management']");
+    private By locationBtn = By.xpath("//i[@data-abc-id='buildingIcon']");
     private String deductionList1 = "//td[contains(text(),'";
     private String deductionList2 = "')]";
     private String dataAbcId = "locationPaymentsListRow";
@@ -342,9 +341,8 @@ public class LocationPaymentPage extends AbcCommonAbstractPage<LocationPaymentPa
         }
     }
 
-    public Map<String, String> get_ded_reimburs_data(String clubNumber) {
-        Map<String, String> ded_reimburs_map = new HashMap<>();
-
+    public Map<String, String> get_deduction_reimbursement_data(String clubNumber) {
+        Map<String, String> deductionReimbursementMap = new HashMap<>();
         Map<String, String> ded = ini.get(clubNumber);
         int index = 0;
         for (Map.Entry<String, String> entry : ded.entrySet()) {
@@ -353,11 +351,11 @@ public class LocationPaymentPage extends AbcCommonAbstractPage<LocationPaymentPa
                 logger.info("This is a Pass status");
             } else if (dedReimburseData[1].equalsIgnoreCase("R")) {
                 logger.info(entry.getValue());
-                ded_reimburs_map.put("key" + index, parse_raw_data(entry.getValue().trim()));
+                deductionReimbursementMap.put("key" + index, parse_raw_data(entry.getValue().trim()));
                 index++;
             }
         }
-        return ded_reimburs_map;
+        return deductionReimbursementMap;
     }
 
     public String parse_raw_data(String str) {
@@ -468,19 +466,35 @@ public class LocationPaymentPage extends AbcCommonAbstractPage<LocationPaymentPa
 
     @Step("Verifying Location Payment details")
     public LocationPaymentPage verify_payment_details(String clubNumber) {
-
-        Map<String, String> paymentMap = get_ded_reimburs_data(clubNumber);
+        wait_until(3);
+        Map<String, String> paymentMap = get_deduction_reimbursement_data(clubNumber);
         for (Map.Entry<String, String> entry : paymentMap.entrySet()) {
             parseMyData(entry.getValue());
         }
 
         logger.info("Verifying location payment details");
+
         click(locationBtn);
         click_location(clubNumber);
         wait_until(2);
         click_payment_tab();
-        verify_deduction_details();
-        verify_reimbursement_details();
+        try {
+            verify_deduction_details();
+            verify_reimbursement_details();
+        } finally {
+            clearing_organisation();
+        }
+        return me();
+    }
+
+    @Step("Clearing Last organisation tested from organisation search box")
+    public LocationPaymentPage clearing_organisation() {
+        click_org_switcher_clear_icon();
+        return me();
+    }
+
+    public LocationPaymentPage click_org_switcher_clear_icon() {
+        click(orgSwitcherClearIcon);
         return me();
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="yyy"   preserve-order="true">
+
+   <!--<listeners>
+       <listener class-name="listeners.ReadWriteDataListener"></listener>
+    </listeners>-->
+    <!--<test name="RCP Verification Scenario" preserve-order="false" >
+    <classes>
+        <class name="testcase.datamigrationtest.ObcToUnoAppTest"/>
+    </classes>
+
+    </test>-->
+    <suite-files>
+        <suite-file path="DataMigrationTest.xml"></suite-file>
+
+    </suite-files>
+
+</suite>

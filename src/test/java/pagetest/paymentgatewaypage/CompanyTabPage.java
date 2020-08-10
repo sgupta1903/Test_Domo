@@ -69,7 +69,7 @@ public class CompanyTabPage extends AbcCommonAbstractPage<CompanyTabPage> {
         verify(presenceOfElementLocated(searchCompany), 60, 2000);
         wait_until(2);
         enter(searchCompany, dataSetName);
-        wait_until(3);
+        wait_until(5);
         enter_by_key();
         return me();
     }
@@ -140,7 +140,7 @@ public class CompanyTabPage extends AbcCommonAbstractPage<CompanyTabPage> {
 
     public CompanyTabPage click_token_credit_card(StorePaymentMethodDetails storePaymentMethodDetails) {
         log.info("Clicking Credit Card Token");
-        String tokenRow = storePaymentMethodDetails.getPayorName();
+        String tokenRow = storePaymentMethodDetails.getPayorPGName();
         String token = tokenRowInfoCreditCard + tokenRow + tokenRowInfo2;
         wait_until(1);
         click(By.xpath(token));
@@ -149,7 +149,7 @@ public class CompanyTabPage extends AbcCommonAbstractPage<CompanyTabPage> {
 
     public CompanyTabPage click_token_bank_account(StorePaymentMethodDetails storePaymentMethodDetails) {
         log.info("Clicking bank Account Token");
-        String tokenRow = storePaymentMethodDetails.getPayorName();
+        String tokenRow = storePaymentMethodDetails.getPayorPGName();
         String token = tokenRowInfoBankAccount + tokenRow + tokenRowInfo2;
         wait_until(1);
         click(By.xpath(token));
@@ -188,7 +188,7 @@ public class CompanyTabPage extends AbcCommonAbstractPage<CompanyTabPage> {
                 click_token_credit_card(storePaymentMethodDetails);
 
                 verify_all(
-                        () -> verify_account_holder_name(storePaymentMethodDetails.getPayorName()),
+                        () -> verify_account_holder_name(storePaymentMethodDetails.getPayorPGName()),
                         () -> verify_expiry_year(expYear),
                         () -> verify_expiry_month(expMonth),
                         () -> verify_zip_code(storeMemberDetails)

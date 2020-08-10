@@ -3,8 +3,8 @@ A30TP-18556,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUn
 A30TP-45133,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUntil,CopyCashInfo,Return To
 A30TP-10834,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUntil,CopyClientProfileDetails,Return To
 A30TP-10722,Main Menu Screen,Profit Center Maintenance,CopyItemCategory,Return To
-A30TP-28338,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUntil,ABC Rate Page,CopyABCRates,Return To
+A30TP-28338,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUntil,ABC Rate Page,ReachVolumePrice,EnterVolumePrice,VerifyVolumePricing,FetchVolumePricingRate,ReturnToRatesPage,CopyABCRates,Return To
 A30TP-11880,Item Main Menu Screen,Client Level Profit Center Maintenance,CopyItemCategoryFee,Return To
 A30TP-11853,Contract Maintenance,Contract Retrieval,Club  Maintenance,PageDownUntil,ABC Fee Page,CopyABCFeeRowWise,Return To
-A30TP-11887,Contract Maintenance,Contract Retrieval,Enter Contract,PayorPageDownUntil,Buyer Info,CopyBuyerInfo,ReturnToDraftUnderName,CopyPayorDetail,Return To
+A30TP-11887,Contract Maintenance,Contract Retrieval,Enter Contract,PayorPageDownUntil,Buyer Info,CopyBuyerInfo,ReturnToDraftUnderName,CopyPayorDetail,PageDownUntilExtendedInfo,copyExtendedInfo,Return To
 REL1-19972,Contract Maintenance,Contract Retrieval,Club  Maintenance,Location Note Page,CopyLocationNotesText,Return To

@@ -3,8 +3,6 @@ package excelsupport;
 Created By: Praveen,Sapna
 Date: 02/12/2020
 */
-import java.io.*;
-import java.util.*;
 
 import config.EnvProperty;
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,7 +12,12 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+
+import java.io.*;
+import java.util.*;
 
 
 public class ExcelClient {
@@ -22,7 +25,8 @@ public class ExcelClient {
     private EnvProperty envProperty;
     private String section;
     private Map<Integer, ExcelRow> sheet;
-    private static XSSFWorkbook book;
+    private XSSFWorkbook book;
+    protected Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
     public ExcelClient(EnvProperty envProperty, String section) {
         this.envProperty = envProperty;
@@ -32,6 +36,11 @@ public class ExcelClient {
         } catch (FileNotFoundException fnf) {
             Assert.fail("Unable to find the configured excel sheet, path: " + getConfigParamValue("path"));
         }
+    }
+
+    public ExcelClient(EnvProperty envProperty) {
+        this.envProperty = envProperty;
+
     }
 
     public ExcelClient(EnvProperty envProperty, String content, String sheetName) {
@@ -45,7 +54,7 @@ public class ExcelClient {
 
     public ExcelClient(String path, String sheetName) {
         try {
-            loadSheet(new FileInputStream(path),sheetName);
+            loadSheet(new FileInputStream(path), sheetName);
         } catch (FileNotFoundException fnf) {
             Assert.fail("Unable to find the configured excel sheet, path: " + path);
         }
@@ -55,7 +64,7 @@ public class ExcelClient {
     public Object[][] get_all_rows() {
         Object[][] array = new Object[sheet.size()][2];
         int count = 0;
-        for(Map.Entry<Integer,ExcelRow> entry : sheet.entrySet()){
+        for (Map.Entry<Integer, ExcelRow> entry : sheet.entrySet()) {
             array[count][0] = entry.getKey();
             array[count][1] = entry.getValue();
             count++;
@@ -85,9 +94,9 @@ public class ExcelClient {
     }
 
     public Object[][] get_multiple_rows(int rowBegin, int rowEnd) {
-        Object[][] array = new Object[(rowEnd-rowBegin)+1][2];
+        Object[][] array = new Object[(rowEnd - rowBegin) + 1][2];
         int count = 0;
-        for(Map.Entry<Integer,ExcelRow> entry : sheet.entrySet()){
+        for (Map.Entry<Integer, ExcelRow> entry : sheet.entrySet()) {
             if ((entry.getKey() >= rowBegin) && (entry.getKey() <= rowEnd)) {
                 array[count][0] = entry.getKey();
                 array[count][1] = entry.getValue();
@@ -99,7 +108,7 @@ public class ExcelClient {
 
     public Map<Integer, ExcelRow> get_multiple_rows_as_map(int rowBegin, int rowEnd) {
         Map<Integer, ExcelRow> map = new HashMap<Integer, ExcelRow>();
-        for(Map.Entry<Integer,ExcelRow> entry : sheet.entrySet()){
+        for (Map.Entry<Integer, ExcelRow> entry : sheet.entrySet()) {
             if ((entry.getKey() >= rowBegin) && (entry.getKey() <= rowEnd)) {
                 map.put(entry.getKey(), entry.getValue());
             }
@@ -155,7 +164,7 @@ public class ExcelClient {
                 sheetData.put(row.getRowNum() + 1, new ExcelRow(rowData, headerArray));
 
             } // loop for rows
-        }catch (IOException ioe) {
+        } catch (IOException ioe) {
             Assert.fail("Unable to load the configured excel sheet, path: " + sheetName);
         }
 
@@ -164,7 +173,7 @@ public class ExcelClient {
     }
 
     private String getConfigParamValue(String param) {
-        return getConfigParamValue(this.section,param);
+        return getConfigParamValue(this.section, param);
     }
 
     private String getConfigParamValue(String section, String param) {
@@ -176,8 +185,8 @@ public class ExcelClient {
      *
      * @param filePath Excel File path,  @param sheetName Sheet Name
      */
-    public static Object[][] read_excel(String filePath, String sheetName) throws IOException {
-        FileInputStream file= new FileInputStream(filePath);
+    public Object[][] read_excel(String filePath, String sheetName) throws IOException {
+        FileInputStream file = new FileInputStream(filePath);
         XSSFWorkbook wb = new XSSFWorkbook(file);
         XSSFSheet sheet = wb.getSheet(sheetName);
         int rowCount = sheet.getLastRowNum();
@@ -194,36 +203,134 @@ public class ExcelClient {
         }
         return data;
     }
+
     /**
      * Write Data To Excel
      *
      * @param data Map
      */
-    public static void write_excel(Map data,String filePath) throws IOException
-    {
+    public void write_excel(Map data, String filePath) throws IOException {
         // valueList to save only Value form Hash Map
         List<String> valueList = new ArrayList<String>(data.values());
-        FileInputStream fileInputStream=new FileInputStream(filePath);
+        FileInputStream fileInputStream = new FileInputStream(filePath);
         book = new XSSFWorkbook(fileInputStream);
         XSSFSheet sheetToWrite = book.getSheetAt(0);
         FileOutputStream fileOutputStream = new FileOutputStream(filePath);
         String[] agreementOrg = valueList.get(4).split("-");
         // getRow function used to find Row index from Excel for member
-        Row row=sheetToWrite.getRow(find_row(sheetToWrite, agreementOrg[1],agreementOrg[0]));
+        Row row = sheetToWrite.getRow(find_row(sheetToWrite, agreementOrg[1], agreementOrg[0]));
         // writting values to cell
-        for (int x=0;x<valueList.size();x++)
-        {
-            Cell cell = row.createCell(x+2);
+        for (int x = 0; x < valueList.size(); x++) {
+            Cell cell = row.createCell(x + 2);
             cell.setCellValue(valueList.get(x));
         }
-        book.write(fileOutputStream)  ;
+        book.write(fileOutputStream);
         fileOutputStream.close();
         fileInputStream.close();
         book = new XSSFWorkbook(new FileInputStream(filePath));
 
     }
+    public void write_excel_dm(Map data, String filePath,String filePath1, String clubNumber) throws IOException {
+        logger.info("Map Value: "+data.values());
+        // valueList to save only Value form Hash Map
+        List<String> valueList = new ArrayList<String>(data.values());
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        logger.info("List of members: "+valueList);
+        book = new XSSFWorkbook(fileInputStream);
+        XSSFSheet sheetToWrite = book.getSheetAt(0);
+        FileOutputStream fileOutputStream = new FileOutputStream(filePath);
 
-    private static int find_row(XSSFSheet sheet, String cellContent,String clubNumber) {
+        //2nd file
+        FileInputStream fileInputStream1 =null;
+        FileOutputStream fileOutputStream1 = null;
+        XSSFSheet sheetToWrite1=null;
+        // writting values to cell
+        String[] club = valueList.get(0).split(",");
+        int num = sheetToWrite.getLastRowNum();
+        int numbofclubs = club.length/2;
+        if (num < 2) {
+            for (int x = 0; x < numbofclubs; x++) {
+                Row row = sheetToWrite.createRow(x + 1);
+                Cell clubnumber = row.createCell(0);
+                Cell cell = row.createCell(1);
+                clubnumber.setCellValue(clubNumber);
+                cell.setCellValue(club[x]);
+            }
+            book.write(fileOutputStream);
+            //write into 2nd excel
+            //2nd file
+            fileInputStream1 = new FileInputStream(filePath1);
+            logger.info("List of members: "+valueList);
+            book = new XSSFWorkbook(fileInputStream1);
+            sheetToWrite1= book.getSheetAt(0);
+            fileOutputStream1 = new FileOutputStream(filePath1);
+            int y=0;
+            for (int x = numbofclubs; x < club.length; x++) {
+                Row row = sheetToWrite1.createRow(y + 1);
+                Cell clubnumber = row.createCell(0);
+                Cell cell = row.createCell(1);
+                clubnumber.setCellValue(clubNumber);
+                cell.setCellValue(club[x]);
+                y++;
+            }
+            book.write(fileOutputStream1);
+        } else {
+            for (int x = 0; x < club.length; x++) {
+                Row row = sheetToWrite.createRow(num + x);
+                Cell clubnumber = row.createCell(0);
+                Cell cell = row.createCell(1);
+                clubnumber.setCellValue(clubNumber);
+                cell.setCellValue(club[x]);
+            }
+            book.write(fileOutputStream);
+            //closing file 1
+            fileOutputStream.close();
+            fileInputStream.close();
+
+            //closing file 2
+            fileOutputStream1.close();
+            fileInputStream1.close();
+        }
+        logger.info("Data saved for Club: "+clubNumber);
+    }
+
+   public void write_excel_dm(Map data, String filePath, String clubNumber,int fin  ,int init ) throws IOException {
+        logger.info("Map Value: "+data.values());
+        // valueList to save only Value form Hash Map
+        List<String> valueList = new ArrayList<String>(data.values());
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        logger.info("List of members: "+valueList);
+        book = new XSSFWorkbook(fileInputStream);
+        XSSFSheet sheetToWrite = book.getSheetAt(0);
+        FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+        // writting values to cell
+        String[] club = valueList.get(0).split(",");
+        int num = sheetToWrite.getLastRowNum();
+        if (num < 2) {
+             for (int x = init ; x < fin; x++) {
+                Row row = sheetToWrite.createRow(  x - init + 1);
+                Cell clubnumber = row.createCell(0);
+                Cell cell = row.createCell(1);
+                clubnumber.setCellValue(clubNumber);
+                cell.setCellValue(club[x]);
+            }
+            book.write(fileOutputStream);
+        } else {
+            for (int x = 0 ; x < fin ; x++) {
+                Row row = sheetToWrite.createRow(num + x);
+                Cell clubnumber = row.createCell(0);
+                Cell cell = row.createCell(1);
+                clubnumber.setCellValue(clubNumber);
+                cell.setCellValue(club[x]);
+            }
+            book.write(fileOutputStream);
+            fileOutputStream.close();
+            fileInputStream.close();
+        }
+        logger.info("Data saved for Club: "+clubNumber);
+    }
+
+    private int find_row(XSSFSheet sheet, String cellContent, String clubNumber) {
         for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row != null) {
@@ -244,7 +351,7 @@ public class ExcelClient {
      * @param filePath Excel File path
      * @return
      */
-    public static String write_clipboard(String filePath) throws IOException {
+    public String write_clipboard(String filePath) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(filePath);
         XSSFWorkbook book = new XSSFWorkbook(fileInputStream);
         XSSFSheet sheet = book.getSheetAt(0);
@@ -257,7 +364,7 @@ public class ExcelClient {
                 DataFormatter formatter = new DataFormatter();
                 value = value + formatter.formatCellValue(cell) + ",";
             }
-            value =value+"\n";
+            value = value + "\n";
         }
         fileInputStream.close();
         return value;

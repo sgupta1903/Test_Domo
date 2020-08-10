@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import pagetest.businessapppage.AbcCommonAbstractPage;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
     public StoreSecondaryMemberDetails storeSecondaryMemberDetails = new StoreSecondaryMemberDetails();
     public StorePcsDetails storePcsDetails = new StorePcsDetails();
     public StoreFreezeStatus storeFreezeStatus = new StoreFreezeStatus();
+    public StoreMemberNoteDetails storeMemberNoteDetails = new StoreMemberNoteDetails();
 
     protected Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
     EnvProperty env = EnvProperty.getInstance(AppConstants.DATA_MIGRATION_INI);
@@ -185,6 +187,7 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
 
     @Step("Store member details")
     public StoreMemberDetails store_member_details(Map getData) {
+        int memerSinceLength=find_element_text(memberSinceDate).length();
         logger.info("Getting Member Details from OBC Application");
         if (is_element_exist(badAddress)) {
             storeMemberDetails.setMemberName(find_element_text(memberName).replace(" ", ""));
@@ -209,8 +212,15 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
         storeMemberDetails.setMemberWorkPhone(find_element_text(memberWorkPhone));
         storeMemberDetails.setMemberCellPhone(find_element_text(memberCellPhone));
         storeMemberDetails.setMemberEmergencyPhone(find_element_text(memberEmerPhone));
-        storeMemberDetails.setMemberSinceDate(find_element_text(memberSinceDate));
         storeMemberDetails.setMembershipType(find_element_text(membershipType).trim());
+        if(find_element_text(memberSinceDate).substring((memerSinceLength-4),memerSinceLength).equalsIgnoreCase("2098")){
+            storeMemberDetails.setMemberSinceDate(find_element_text(memberSinceDate).substring(0,memerSinceLength-4)+"1998");
+        }
+        else if(find_element_text(memberSinceDate).substring((memerSinceLength-4),memerSinceLength).equalsIgnoreCase("2099")){
+            storeMemberDetails.setMemberSinceDate(find_element_text(memberSinceDate).substring(0,memerSinceLength-4)+"1999");
+        }
+        else
+        storeMemberDetails.setMemberSinceDate(find_element_text(memberSinceDate));
 
         logger.info(BLUE_UNDERLINED + "**************Member Details are listed below************" + ANSI_RESET);
         logger.info(convertObjectIntoJsonString(storeMemberDetails));
@@ -220,11 +230,22 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
 
     @Step("Store agreement details")
     public StoreAgreementDetails store_agreement_details(Map getData) {
+        int contractBeginLength=find_element_text(contractBeganDate).length();
+
         logger.info("Getting  Agreement Details from OBC UI");
-        storeAgreementDetails.setContactBeganDate(find_element_text(contractBeganDate));
-        storeAgreementDetails.setNextDueDate(find_element_text(nextDueDate));
+
         storeAgreementDetails.setPastDueAmount("$" + find_element_text(pastDueAmount));
         storeAgreementDetails.setDueAmount("$" + find_element_text(dueAmount).replaceAll(",", ""));
+        storeAgreementDetails.setNextDueDate(find_element_text(nextDueDate));
+
+        if(find_element_text(contractBeganDate).substring((contractBeginLength-4),contractBeginLength).equalsIgnoreCase("2098")){
+            storeAgreementDetails.setContactBeganDate(find_element_text(contractBeganDate).substring(0,contractBeginLength-4)+"1998");
+        }
+        else if(find_element_text(contractBeganDate).substring((contractBeginLength-4),contractBeginLength).equalsIgnoreCase("2099")){
+            storeAgreementDetails.setContactBeganDate(find_element_text(contractBeganDate).substring(0,contractBeginLength-4)+"1999");
+        }
+        else
+        storeAgreementDetails.setContactBeganDate(find_element_text(contractBeganDate));
 
         logger.info(BLUE_UNDERLINED + "**************Agreement details are mentioned below****************" + ANSI_RESET);
         logger.info(convertObjectIntoJsonString(storeAgreementDetails));
@@ -235,9 +256,10 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
     @Step("Store subscription details")
     public StoreSubscriptionDetails
     store_subscription_details(Map getData) {
+        String subItemOBC=find_element_text(subscriptionType);
         logger.info("Getting  Subscription Details from OBC UI");
         if (is_element_exist(couponType)) {
-            String subItemOBC = find_element_text(subscriptionType);
+             //subItemOBC = find_element_text(subscriptionType);
             switch (subItemOBC) {
                 case "Cash":
                     storeSubscriptionDetails.setSubscriptionType("Paid Up Front");
@@ -253,9 +275,15 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
                     break;
             }
 
-           // storeSubscriptionDetails.setSubscriptionType("Dues");
+            // storeSubscriptionDetails.setSubscriptionType("Dues");
             logger.info(convertObjectIntoJsonString(storeSubscriptionDetails));
         } else {
+            if(subItemOBC.equalsIgnoreCase("Cash")){
+                storeSubscriptionDetails.setSubscriptionType("Paid Up Front");
+                storeSubscriptionDetails.setSubscriptionBeganDate(find_element_text(contractBeganDate));
+                storeSubscriptionDetails.setSubscriptionExpirationDate(find_element_text(subscriptionExpirationDate));
+            }
+            else
             storeSubscriptionDetails.setSubscriptionType(find_element_text(subscriptionType).replace(" end", ""));
             storeSubscriptionDetails.setSubscriptionBeganDate(find_element_text(contractBeganDate));
             storeSubscriptionDetails.setSubscriptionDueAmount("$" + find_element_text(dueAmount).replaceAll(",", ""));
@@ -266,7 +294,7 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
             if (is_element_exist(noInvoices)) {
                 storeSubscriptionDetails.setSubscriptionItem(DUES);
             } else {
-                String subItemOBC = find_element_text(subItem);
+                 subItemOBC = find_element_text(subItem);
                 switch (subItemOBC) {
                     case DUES:
                         storeSubscriptionDetails.setSubscriptionItem(DUES);
@@ -376,14 +404,28 @@ public class AccountSummaryPage extends AbcCommonAbstractPage<AccountSummaryPage
         return me();
     }
 
-    public AccountSummaryPage store_member_note_details() {
+    public StoreMemberNoteDetails store_member_note_details() {
         click(accountNote);
+        Map<String, String>map= new HashMap<>();
         logger.info("Storing member note details");
         for (int i = 5; i <= 23; i++) {
             String memberNote = find_element_text(get_member_note_xpath(i));
-            env.writeIniFile("MEMBER_NOTE", "memberNote" + i, memberNote);
+            map.put("memberNote"+i,memberNote);
             i = i + 1;
         }
-        return me();
+        storeMemberNoteDetails.setMemberNote1(map.get("memberNote5"));
+        storeMemberNoteDetails.setMemberNote2(map.get("memberNote7"));
+        storeMemberNoteDetails.setMemberNote3(map.get("memberNote9"));
+        storeMemberNoteDetails.setMemberNote4(map.get("memberNote11"));
+        storeMemberNoteDetails.setMemberNote5(map.get("memberNote13"));
+        storeMemberNoteDetails.setMemberNote6(map.get("memberNote15"));
+        storeMemberNoteDetails.setMemberNote7(map.get("memberNote17"));
+        storeMemberNoteDetails.setMemberNote8(map.get("memberNote19"));
+        storeMemberNoteDetails.setMemberNote9(map.get("memberNote21"));
+        storeMemberNoteDetails.setMemberNote10(map.get("memberNote23"));
+
+        logger.info(BLUE_UNDERLINED + "****************Member Notes Details are mentioned below*********************************" + ANSI_RESET);
+        logger.info(convertObjectIntoJsonString(storeMemberNoteDetails));
+        return storeMemberNoteDetails;
     }
 }
