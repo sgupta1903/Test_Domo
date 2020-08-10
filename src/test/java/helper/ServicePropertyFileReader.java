@@ -53,7 +53,7 @@ public class ServicePropertyFileReader {
             return "/opt/selenium/drivers/chromedriver";
         }else if("window".equals(propertyValue))
         {
-            return "/opt/selenium/drivers/chromedriver";
+            return "D://local_Domo/chromedriver";
         }
         return propertyValue;
     }
