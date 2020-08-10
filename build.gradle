@@ -51,7 +51,7 @@ allure {
 }
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-  //  compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '3.141.59'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-chrome-driver', version: '3.141.59'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.141.59'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version: '3.141.59'
     compile group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.141.59'

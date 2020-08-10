@@ -52,8 +52,9 @@ public class DriverInitilization {
                 return WebDriverPool.DEFAULT.getDriver(new FirefoxOptions());
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
-                    WebDriverManager.chromedriver().setup();
-                    return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                   // WebDriverManager.chromedriver().setup();
+                    System.setProperty("webdriver.chrome.driver", "D:/local_Domo/chromedriver.exe");
+                  //  return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
                 } else {
 
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
