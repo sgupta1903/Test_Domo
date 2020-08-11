@@ -41,6 +41,7 @@ public class DriverInitilization {
     public WebDriver initilizingWebDriver() {
         String browser = envProperty.getConfigPropertyValue("Default", "browser").toLowerCase();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        ChromeOptions co = new ChromeOptions();
 
         switch (browser) {
 
@@ -53,13 +54,14 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
+                    co.setBinary("/Test_Domo/chromedriver.exe");
                    // return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
                     return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
 
                 } else {
 
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
-                    ChromeOptions co = new ChromeOptions();
+                  // ChromeOptions co = new ChromeOptions();
                     browserLaunch = ServicePropertyFileReader.getInstance("env").getPropertyValue("browserLaunch");
                     if ("headless".equals(browserLaunch)) {
                         co.addArguments("--headless");
