@@ -54,7 +54,7 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                    co.setBinary("C:\\Users\\surbhigupta\\AppData\\Local\\Google\\Chrome\\Application\\84.0.4147.105\\chrome.exe");
+                    co.setBinary("/path/to/other/chrome/binary");
                    // return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
                     return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
 
