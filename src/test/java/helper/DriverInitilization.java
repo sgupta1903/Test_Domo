@@ -53,8 +53,8 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                  //  return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                    return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
+                    return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+
                 } else {
 
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
@@ -96,17 +96,17 @@ public class DriverInitilization {
                     desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, co);
                     return new ChromeDriver(desiredCapabilities);
                 }
-                }
-                return null;
         }
-
-        public void quitDriver () {
-            if (driver != null) {
-                WebDriverPool.DEFAULT.dismissAll();
-                driver = null;
-                parentWindow = null;
-            }
-        }
-
-
+        return null;
     }
+
+    public void quitDriver() {
+        if (driver != null) {
+            WebDriverPool.DEFAULT.dismissAll();
+            driver = null;
+            parentWindow = null;
+        }
+    }
+
+
+}
