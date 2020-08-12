@@ -1,4 +1,4 @@
-package testcase.datamigrationtest.getdatafromexcel;
+package testcase.datamigrationtest.getDataFromExcelTest2;
 /*
 Created By: Monika Phoughat mphoughat@bhavnacorp.com
 Updated By: Shilpi Gupta
@@ -64,7 +64,7 @@ public class GetDataFromExcelTestOne extends AbstractAutoUITest {
         };
     }
 
-    @DataProvider(name = "excelData" , parallel  = true)
+    @DataProvider(name = "excelData" )
     public Object[][] readExcel() throws IOException {
         dbConnection();
         log.info("Member" + ":" + getData);

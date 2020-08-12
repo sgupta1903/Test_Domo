@@ -11,7 +11,7 @@
 
     <test name="DM Scenario2" >
         <classes>
-            <class name="testcase.datamigrationtest.getdatafromexcel.GetDataFromExcelTestOne"/>
+            <class name="testcase.datamigrationtest.getDataFromExcelTest2.GetDataFromExcelTestOne"/>
         </classes>
     </test>
 
