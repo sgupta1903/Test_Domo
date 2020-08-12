@@ -185,14 +185,14 @@ task suiteRunner(type: Test) {
             clubprop.setProperty("club",clubValue.toString());
             prop.setProperty("env", envValue.toString())
             prop.setProperty("os", "window")
-          //  prop.setProperty("browserLaunch", "headless")
+           prop.setProperty("browserLaunch", "headless")
             dependsOn cleanTest
             useDefaultListeners = true
             prop.store(myfile.newWriter(), null)
             clubprop.store(clubfile.newWriter(), null)
-            suites "src/test/resources/DMTest.xml"
+            suites "src/test/resources/DMTest.xml" , "src/test/resources/DMTest1.xml"
         }
-       
+        
         if (openendbank) {
             println 'Openend Test running'
             prop.setProperty("env", envValue.toString())
