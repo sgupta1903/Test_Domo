@@ -190,7 +190,7 @@ task suiteRunner(type: Test) {
             useDefaultListeners = true
             prop.store(myfile.newWriter(), null)
             clubprop.store(clubfile.newWriter(), null)
-            suites "src/test/resources/DMTest.xml" , "src/test/resources/DMTest1.xml"
+            suites "src/test/resources/DMTest.xml"
         }
         
         if (openendbank) {
