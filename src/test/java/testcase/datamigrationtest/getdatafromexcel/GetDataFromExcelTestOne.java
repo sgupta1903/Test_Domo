@@ -64,7 +64,7 @@ public class GetDataFromExcelTestOne extends AbstractAutoUITest {
         };
     }
 
-    @DataProvider(name = "excelData")
+    @DataProvider(name = "excelData" , parallel  = true)
     public Object[][] readExcel() throws IOException {
         dbConnection();
         log.info("Member" + ":" + getData);
