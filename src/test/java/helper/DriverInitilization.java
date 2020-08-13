@@ -2,6 +2,7 @@ package helper;
 
 import config.EnvProperty;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -10,8 +11,12 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import ru.stqa.selenium.factory.WebDriverPool;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class DriverInitilization {
 
@@ -24,7 +29,7 @@ public class DriverInitilization {
         this.envProperty = envProperty;
     }
 
-    public WebDriver getDriver() {
+    public WebDriver getDriver()  {
         if (this.driver == null) {
             this.driver = initilizingWebDriver();
             this.parentWindow = driver.getWindowHandle();
@@ -38,11 +43,11 @@ public class DriverInitilization {
     }
 
     @SuppressWarnings("deprecation")
-    public WebDriver initilizingWebDriver() {
+    public WebDriver initilizingWebDriver()  {
         String browser = envProperty.getConfigPropertyValue("Default", "browser").toLowerCase();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         ChromeOptions co = new ChromeOptions();
-
+    String hubUrl = "http://localhost:4444/wd/hub";
         switch (browser) {
 
             case "internet explorer":
@@ -53,10 +58,18 @@ public class DriverInitilization {
                 return WebDriverPool.DEFAULT.getDriver(new FirefoxOptions());
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
-                    WebDriverManager.chromedriver().setup();
+                   // WebDriverManager.chromedriver().setup();
                    // co.setBinary("/path/to/other/chrome/binary");
-                //    return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                    return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
+                    desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, co);
+                    System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
+                    try {
+                        return new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    // return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                    
+                  //  return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
 
                 } else {
 
