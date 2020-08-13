@@ -186,7 +186,7 @@ task suiteRunner(type: Test) {
             clubprop.setProperty("club", clubValue.toString());
             prop.setProperty("env", envValue.toString())
             prop.setProperty("os", "window")
-            prop.setProperty("browserLaunch", "headless")
+            prop.setProperty("browserLaunch", "chrome")
             dependsOn cleanTest
             useDefaultListeners = true
             prop.store(myfile.newWriter(), null)
