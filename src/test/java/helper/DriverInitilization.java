@@ -76,9 +76,9 @@ public class DriverInitilization {
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
                   // ChromeOptions co = new ChromeOptions();
                     browserLaunch = ServicePropertyFileReader.getInstance("env").getPropertyValue("browserLaunch");
-                    if ("headless".equals(browserLaunch)) {
-                        co.addArguments("--headless");
-                    }
+//                    if ("headless".equals(browserLaunch)) {
+//                        co.addArguments("--headless");
+//                    }
 
                     co.addArguments("--disable-infobars");
                     co.addArguments("--ignore-certifcate-errors");
