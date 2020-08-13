@@ -145,11 +145,14 @@ def dmtest1 = project.hasProperty("dmtest1")
 
 task suiteRunner(type: Test) {
     useTestNG() {
+        forkEvery parallel = true
+        maxParallelForks = 2
 
         testLogging {
             showStandardStreams = true
             exceptionFormat = 'full'
             showStackTraces = "true"
+            
         }
 
         def prop = new Properties()
