@@ -58,16 +58,16 @@ public class DriverInitilization {
                 return WebDriverPool.DEFAULT.getDriver(new FirefoxOptions());
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
-                    WebDriverManager.chromedriver().setup();
+                    //WebDriverManager.chromedriver().setup();
                    // co.setBinary("/path/to/other/chrome/binary");
-                    //desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, co);
+                   // desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, co);
 //                    System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
-//                    try {
-//                        return new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
-//                    } catch (MalformedURLException e) {
-//                        e.printStackTrace();
-//                    }
-                     return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                    try {
+                        return new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                  //   return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
                     
                   //  return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
 
