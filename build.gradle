@@ -141,6 +141,7 @@ def updatedetails = project.hasProperty("updatedetails")
 def fieldvalidation = project.hasProperty("fieldvalidation")
 def datamigrationtest = project.hasProperty("datamigrationtest")
 def dmtest = project.hasProperty("dmtest")
+def dmtest1 = project.hasProperty("dmtest1")
 
 task suiteRunner(type: Test) {
     useTestNG() {
@@ -186,12 +187,26 @@ task suiteRunner(type: Test) {
             clubprop.setProperty("club", clubValue.toString());
             prop.setProperty("env", envValue.toString())
             prop.setProperty("os", "window")
-           prop.setProperty("browserLaunch", "headless")
+            prop.setProperty("browserLaunch", "headless")
             dependsOn cleanTest
             useDefaultListeners = true
             prop.store(myfile.newWriter(), null)
             clubprop.store(clubfile.newWriter(), null)
             suites "src/test/resources/DMTest.xml"
+        }
+
+            if (dmtest1) {
+                println 'Data Migration Parallel test Scenario Running'
+                clubprop.setProperty("club", clubValue.toString());
+                prop.setProperty("env", envValue.toString())
+                prop.setProperty("os", "window")
+                prop.setProperty("browserLaunch", "headless")
+                dependsOn cleanTest
+                useDefaultListeners = true
+                prop.store(myfile.newWriter(), null)
+                clubprop.store(clubfile.newWriter(), null)
+                suites "src/test/resources/DMTest1.xml"
+            }
 
             if (openendbank) {
             println 'Openend Test running'
@@ -368,5 +383,4 @@ task suiteRunner(type: Test) {
             suites "src/test/resources/unoapp_xmls/UpdateDetails.xml"
         }
     }
-}
 }
