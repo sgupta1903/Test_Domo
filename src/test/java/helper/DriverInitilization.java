@@ -46,8 +46,7 @@ public class DriverInitilization {
     public WebDriver initilizingWebDriver()  {
         String browser = envProperty.getConfigPropertyValue("Default", "browser").toLowerCase();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        ChromeOptions co = new ChromeOptions();
-    String hubUrl = "http://localhost:4444/wd/hub";
+        
         switch (browser) {
 
             case "internet explorer":
@@ -59,26 +58,16 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                   // co.setBinary("/path/to/other/chrome/binary");
-                   // desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, co);
-//                    System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
-//                    try {
-//                        return new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
-//                    } catch (MalformedURLException e) {
-//                        e.printStackTrace();
-//                    }
                      return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                    
-                  //  return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub" , new ChromeOptions());
-
-                } else {
+                     } 
+                     else {
 
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
-                  // ChromeOptions co = new ChromeOptions();
+                   ChromeOptions co = new ChromeOptions();
                     browserLaunch = ServicePropertyFileReader.getInstance("env").getPropertyValue("browserLaunch");
-//                    if ("headless".equals(browserLaunch)) {
-//                        co.addArguments("--headless");
-//                    }
+                    if ("headless".equals(browserLaunch)) {
+                        co.addArguments("--headless");
+                    }
 
                     co.addArguments("--disable-infobars");
                     co.addArguments("--ignore-certifcate-errors");
