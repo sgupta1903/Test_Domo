@@ -60,7 +60,7 @@ public class DriverInitilization {
                     WebDriverManager.chromedriver().setup();
                      //return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
                     try {
-                         new RemoteWebDriver(new URL("http://localhost:5555/wd/hub"), new ChromeOptions());
+                         new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), new ChromeOptions());
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
