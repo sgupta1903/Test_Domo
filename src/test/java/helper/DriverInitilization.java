@@ -58,8 +58,13 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                     return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                     } 
+                     //return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                    try {
+                         new RemoteWebDriver(new URL("http://localhost:5555/wd/hub"), new ChromeOptions());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                } 
                      else {
 
                     System.setProperty("webdriver.chrome.driver", ServicePropertyFileReader.getInstance("env").getPropertyValue("os"));
