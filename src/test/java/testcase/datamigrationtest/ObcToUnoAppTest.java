@@ -2,6 +2,7 @@ package testcase.datamigrationtest;
 
 
 import datastore.*;
+import io.qameta.allure.Step;
 import io.qameta.allure.TmsLink;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -47,7 +48,8 @@ public class ObcToUnoAppTest extends AbstractAutoUITest {
     }
 
 
-    @Test(description = "Login 'OBC' Application with {clubNumber} and {memberNumber} ")
+    @Test(description = "Login 'OBC' Application " )
+    @Step("Login with {clubNumber} and {memberNumber}")
     @TmsLink("A30TP-11053")
     public void loginObcUiApplication() {
         log.info("Login into the OBC Application");
@@ -57,7 +59,7 @@ public class ObcToUnoAppTest extends AbstractAutoUITest {
                 .verify_successful_login();
     }
 
-    @Test(description = "Store Club Details from OBC Application with {clubNumber} and {memberNumber}")
+    @Test(description = "Store Club Details from OBC Application")
     @TmsLink("A30TP-10824")
     public void storeClubDetails() {
         log.info("Storing Club Details from OBC UI Application ");
