@@ -59,8 +59,8 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                     return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                   
+                    // return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                    return WebDriverPool.DEFAULT.getDriver("http://localhost:4444/wd/hub", new ChromeOptions());
                 } 
                      else {
 
