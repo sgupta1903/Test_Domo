@@ -24,7 +24,7 @@ public class DriverInitilization {
     WebDriver driver;
     String parentWindow;
     String browserLaunch;
-
+   
     public DriverInitilization(EnvProperty envProperty) {
         this.envProperty = envProperty;
     }
@@ -46,6 +46,7 @@ public class DriverInitilization {
     public WebDriver initilizingWebDriver()  {
         String browser = envProperty.getConfigPropertyValue("Default", "browser").toLowerCase();
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+      
         
         switch (browser) {
 
@@ -58,12 +59,8 @@ public class DriverInitilization {
             case "chrome":
                 if (ServicePropertyFileReader.getInstance("env").getValue("os").equals("Windows")) {
                     WebDriverManager.chromedriver().setup();
-                     //return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
-                    try {
-                         new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), new ChromeOptions());
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
+                     return WebDriverPool.DEFAULT.getDriver(new ChromeOptions());
+                   
                 } 
                      else {
 
